@@ -65,8 +65,8 @@ const Home: NextPage = () => {
   return (
     <Box>
       <SEO
-        title="Saas UI Landingspage"
-        description="Free SaaS landingspage starter kit"
+        title="NexAI"
+        description="Next Generation AI"
       />
       <Box>
         <HeroSection />
@@ -89,7 +89,7 @@ const HeroSection: React.FC = () => {
   return (
     <Box position="relative" overflow="hidden">
       <BackgroundGradient height="100%" zIndex="-1" />
-      <Container maxW="container.xl" pt={{ base: 40, lg: 60 }} pb="40">
+      <Container maxW="container.xl" pt={{ base: 20 , lg: 40 }} pb="40">
         <Stack direction={{ base: "column", lg: "row" }} alignItems="center">
           <Hero
             id="home"
@@ -97,21 +97,20 @@ const HeroSection: React.FC = () => {
             px="0"
             title={
               <FallInPlace>
-                Build beautiful
-                <Br /> software faster
+                NexAI - AI Tool
+                <Br /> Next Generation
               </FallInPlace>
             }
             description={
               <FallInPlace delay={0.4} fontWeight="medium">
-                Saas UI is a <Em>React component library</Em>
-                <Br /> that doesn&apos;t get in your way and helps you <Br />{" "}
-                build intuitive SaaS products with speed.
+                Unlock the power of AI with <Em>NexAI</Em>
+                <Br /> Built using the Gemini API, it enables users to create and customize their own AI tools effortlessly <Br />{" "}
               </FallInPlace>
             }
           >
             <FallInPlace delay={0.8}>
-              <HStack pt="4" pb="12" spacing="8">
-                <NextjsLogo height="28px" /> <ChakraLogo height="20px" />
+              <HStack pt="1" pb="30" spacing="8">
+                {/* <NextjsLogo height="28px" /> <ChakraLogo height="20px" /> */}
               </HStack>
 
               <ButtonGroup spacing={4} alignItems="center">
@@ -150,17 +149,17 @@ const HeroSection: React.FC = () => {
             margin="0 auto"
           >
             <FallInPlace delay={1}>
-              <Box overflow="hidden" height="100%">
+              {/* <Box overflow="hidden" height="100%">
                 <Image
                   src="/static/screenshots/list.png"
                   layout="fixed"
                   width={1200}
-                  height={762}
+                  height={780}
                   alt="Screenshot of a ListPage in Saas UI Pro"
                   quality="75"
                   priority
                 />
-              </Box>
+              </Box> */}
             </FallInPlace>
           </Box>
         </Stack>
@@ -464,16 +463,18 @@ const FaqSection = () => {
 
 export default Home;
 
-export async function getStaticProps() {
-  return {
-    props: {
-      announcement: {
-        title: "Support us by becoming a stargazer! 🚀 ",
-        description:
-          '<img src="https://img.shields.io/github/stars/saas-js/saas-ui.svg?style=social&label=Star" />',
-        href: "https://github.com/saas-js/saas-ui",
-        action: false,
-      },
-    },
-  };
-}
+// export async function getStaticProps() {
+//   return {
+//     props: {
+//       announcement: {
+//         title: "Support us by becoming a stargazer! 🚀 ",
+//         description:
+//           '<img src="https://img.shields.io/github/stars/saas-js/saas-ui.svg?style=social&label=Star" />',
+//         href: "https://github.com/saas-js/saas-ui",
+//         action: false,
+//       },
+//     },
+//   };
+// }
+
+
