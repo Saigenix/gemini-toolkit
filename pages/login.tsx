@@ -12,11 +12,6 @@ const providers = {
     name: 'Google',
     icon: FaGoogle,
   },
-  github: {
-    name: 'Github',
-    icon: FaGithub,
-    variant: 'solid',
-  },
 }
 
 const Login: NextPage = () => {
