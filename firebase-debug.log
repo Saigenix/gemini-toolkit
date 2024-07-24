@@ -1,0 +1,63 @@
+[debug] [2024-07-24T18:56:19.566Z] ----------------------------------------------------------------------
+[debug] [2024-07-24T18:56:19.569Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\radhika\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy
+[debug] [2024-07-24T18:56:19.569Z] CLI Version:   13.14.0
+[debug] [2024-07-24T18:56:19.569Z] Platform:      win32
+[debug] [2024-07-24T18:56:19.569Z] Node Version:  v20.11.1
+[debug] [2024-07-24T18:56:19.569Z] Time:          Thu Jul 25 2024 00:26:19 GMT+0530 (India Standard Time)
+[debug] [2024-07-24T18:56:19.570Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2024-07-24T18:56:19.666Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2024-07-24T18:56:19.666Z] > authorizing via signed-in user (namex678@gmail.com)
+[debug] [2024-07-24T18:56:19.666Z] [iam] checking project gemini-toolkit for permissions ["firebase.projects.get","firebasehosting.sites.update"]
+[debug] [2024-07-24T18:56:19.668Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/gemini-toolkit:testIamPermissions [none]
+[debug] [2024-07-24T18:56:19.669Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/gemini-toolkit:testIamPermissions x-goog-quota-user=projects/gemini-toolkit
+[debug] [2024-07-24T18:56:19.669Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/gemini-toolkit:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2024-07-24T18:56:21.523Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/gemini-toolkit:testIamPermissions 200
+[debug] [2024-07-24T18:56:21.524Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/gemini-toolkit:testIamPermissions {"permissions":["firebase.projects.get","firebasehosting.sites.update"]}
+[debug] [2024-07-24T18:56:21.525Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/gemini-toolkit [none]
+[debug] [2024-07-24T18:56:22.468Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/gemini-toolkit 200
+[debug] [2024-07-24T18:56:22.468Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/gemini-toolkit {"projectId":"gemini-toolkit","projectNumber":"190798096608","displayName":"gemini-toolkit","name":"projects/gemini-toolkit","resources":{"hostingSite":"gemini-toolkit"},"state":"ACTIVE","etag":"1_76bb6f39-25a4-4b63-8cf5-2e1c509b540a"}
+[debug] [2024-07-24T18:56:28.361Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/gemini-toolkit/sites pageToken=&pageSize=10
+[debug] [2024-07-24T18:56:29.783Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/gemini-toolkit/sites 200
+[debug] [2024-07-24T18:56:29.784Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/gemini-toolkit/sites {"sites":[{"name":"projects/gemini-toolkit/sites/gemini-toolkit","defaultUrl":"https://gemini-toolkit.web.app","appId":"1:190798096608:web:39fd0bc690f79285470885","type":"DEFAULT_SITE"}]}
+[debug] [2024-07-24T18:56:29.784Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/-/webApps/1:190798096608:web:39fd0bc690f79285470885/config [none]
+[debug] [2024-07-24T18:56:31.081Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/-/webApps/1:190798096608:web:39fd0bc690f79285470885/config 200
+[debug] [2024-07-24T18:56:31.081Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/-/webApps/1:190798096608:web:39fd0bc690f79285470885/config {"projectId":"gemini-toolkit","appId":"1:190798096608:web:39fd0bc690f79285470885","storageBucket":"gemini-toolkit.appspot.com","apiKey":"AIzaSyC_FTuxEeWdy4H00eSroOpA2pPegTdN42g","authDomain":"gemini-toolkit.firebaseapp.com","messagingSenderId":"190798096608"}
+[info] 
+   Thank you for trying our early preview of Next.js support on Firebase Hosting.
+   During the preview, support is best-effort and breaking changes can be expected. Proceed with caution.
+   The integration is known to work with Next.js version 12 - 14.0. You may encounter errors.
+
+   Documentation: https://firebase.google.com/docs/hosting/frameworks/nextjs
+   File a bug: https://github.com/firebase/firebase-tools/issues/new?template=bug_report.md
+   Submit a feature request: https://github.com/firebase/firebase-tools/issues/new?template=feature_request.md
+
+   We'd love to learn from you. Express your interest in helping us shape the future of Firebase Hosting: https://goo.gle/41enW5X
+
+[debug] [2024-07-24T18:56:41.891Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/gemini-toolkit/sites/gemini-toolkit [none]
+[debug] [2024-07-24T18:56:43.234Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/gemini-toolkit/sites/gemini-toolkit 200
+[debug] [2024-07-24T18:56:43.234Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/gemini-toolkit/sites/gemini-toolkit {"name":"projects/gemini-toolkit/sites/gemini-toolkit","defaultUrl":"https://gemini-toolkit.web.app","appId":"1:190798096608:web:39fd0bc690f79285470885","type":"DEFAULT_SITE"}
+[info]   ▲ Next.js 14.2.5
+
+[info] 
+   Linting and checking validity of types ...
+
+[info]  ⨯ ESLint: Failed to load config "next/core-web-vitals" to extend from. Referenced from: D:\Coding\web devolepment\Next.js\.eslintrc.json
+
+[info] Failed to compile.
+
+
+[info] ./pages/blog.tsx:7:26
+Type error: Cannot find module 'contentlayer/generated' or its corresponding type declarations.
+
+   5 |
+   6 | import { compareDesc, format, parseISO } from 'date-fns'
+>  7 | import { allPosts } from 'contentlayer/generated'
+     |                          ^
+   8 | import { useMDXComponent } from 'next-contentlayer/hooks'
+   9 |
+  10 | const Blog: NextPage = ({ posts }: any) => {
+
+[debug] [2024-07-24T18:56:55.618Z] Error: ENOENT: no such file or directory, open 'D:\Coding\web devolepment\Next.js\gemini-toolkit\.next\export-marker.json'
+[error] 
+[error] Error: An unexpected error has occurred.
