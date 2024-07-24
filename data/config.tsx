@@ -8,24 +8,16 @@ import { Logo } from './logo'
 const siteConfig = {
   logo: Logo,
   seo: {
-    title: 'Saas UI',
-    description: 'The React component library for startups',
+    title: 'NexAI',
+    description: 'The Next Level AI',
   } as NextSeoProps,
   termsUrl: '#',
   privacyUrl: '#',
   header: {
     links: [
       {
-        id: 'features',
-        label: 'Features',
-      },
-      {
-        id: 'pricing',
-        label: 'Pricing',
-      },
-      {
-        id: 'faq',
-        label: 'FAQ',
+        id: '',
+        label: '',
       },
       {
         label: 'Login',
@@ -41,21 +33,21 @@ const siteConfig = {
   footer: {
     copyright: (
       <>
-        Built by{' '}
-        <Link href="https://twitter.com/Pagebakers">Eelco Wiersma</Link>
+        Copyright &copy; {' '}
+        <Link href="#">2024 All Rights Reserved</Link>
       </>
     ),
     links: [
       {
-        href: 'mailto:hello@saas-ui.dev',
+        href: '#',
         label: 'Contact',
       },
       {
-        href: 'https://twitter.com/saas_js',
+        href: '#',
         label: <FaTwitter size="14" />,
       },
       {
-        href: 'https://github.com/saas-js/saas-ui',
+        href: '#',
         label: <FaGithub size="14" />,
       },
     ],
