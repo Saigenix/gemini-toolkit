@@ -1,24 +1,35 @@
 import { NextPage } from "next";
 import NextLink from "next/link";
 import { Box, Center, Stack, Text } from "@chakra-ui/react";
-import { Auth } from "@saas-ui/auth";
-import { Link } from "@saas-ui/react";
 import { Features } from "components/features";
 import { BackgroundGradient } from "components/gradients/background-gradient";
 import { Section } from "components/section";
 import siteConfig from "data/config";
-
-import { FaGithub, FaGoogle } from "react-icons/fa";
 import { PageTransition } from "components/motion/page-transition";
-
-const providers = {
-  google: {
-    name: "Google",
-    icon: FaGoogle,
-  },
-};
-
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../utils/Auth";
+import { useRouter } from "next/router";
+import { useEffect,useState } from "react";
+import { LoginWithGoogle } from "../utils/Auth";
+import { Icons } from "../components/icons"
 const SignUp: NextPage = () => {
+  const [user, loading, error] = useAuthState(auth);
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const router =  useRouter();
+
+  async function onSubmit(event: React.SyntheticEvent) {
+    event.preventDefault()
+    setIsLoading(true)
+
+    // setTimeout(() => {
+    //   setIsLoading(false)
+    // }, 3000)
+  }
+  useEffect(() => {
+    // console.log(user)
+    if(user){
+      router.push("/")
+  }},[user])
   return (
     <Section height="100vh" innerWidth="container.xl">
       <BackgroundGradient
@@ -66,23 +77,17 @@ const SignUp: NextPage = () => {
           </Box>
           <Center height="100%" flex="1">
             <Box width="container.sm" pt="8" px="8">
-              <Auth
-                view="signup"
-                title={siteConfig.signup.title}
-                providers={providers}
-                loginLink={<Link href="/login">Log in</Link>}
+              <button
+                disabled={isLoading}
+                onClick={() => LoginWithGoogle()}
               >
-                <Text color="muted" fontSize="sm">
-                  By signing up you agree to our{" "}
-                  <Link href={siteConfig.termsUrl} color="white">
-                    Terms of Service
-                  </Link>{" "}
-                  and{" "}
-                  <Link href={siteConfig.privacyUrl} color="white">
-                    Privacy Policy
-                  </Link>
-                </Text>
-              </Auth>
+                {isLoading ? (
+                  <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                  <Icons.google className="mr-5 pr-4 h-4 w-4" />
+                )}{" "}
+                Sign In with Google
+              </button>
             </Box>
           </Center>
         </Stack>
