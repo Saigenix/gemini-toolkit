@@ -53,33 +53,28 @@ const siteConfig = {
     ],
   },
   signup: {
-    title: 'Start building with Saas UI',
+    title: 'Create Your AI Tools with Gemini Toolkit',
     features: [
       {
         icon: FiCheck,
-        title: 'Accessible',
-        description: 'All components strictly follow WAI-ARIA standards.',
+        title: 'User-Friendly Interface',
+        description: 'Easily navigate and build with a straightforward, intuitive design.',
       },
       {
         icon: FiCheck,
-        title: 'Themable',
-        description:
-          'Fully customize all components to your brand with theme support and style props.',
+        title: 'Customizable Templates',
+        description: 'Tailor your AI tools with flexible templates to meet your specific needs.',
       },
       {
         icon: FiCheck,
-        title: 'Composable',
-        description:
-          'Compose components to fit your needs and mix them together to create new ones.',
-      },
-      {
-        icon: FiCheck,
-        title: 'Productive',
-        description:
-          'Designed to reduce boilerplate and fully typed, build your product at speed.',
+        title: 'Seamless API Integration',
+        description: 'Effortlessly connect with the Gemini API for advanced AI functionalities.',
       },
     ],
   },
 }
 
 export default siteConfig
+
+
+
