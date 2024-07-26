@@ -19,12 +19,12 @@ const siteConfig = {
         id: '',
         label: '',
       },
+      // {
+      //   label: 'Login',
+      //   href: '/login',
+      // },
       {
-        label: 'Login',
-        href: '/login',
-      },
-      {
-        label: 'Sign Up',
+        label: 'Sign In',
         href: '/signup',
         variant: 'primary',
       },

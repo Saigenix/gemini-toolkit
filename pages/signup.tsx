@@ -11,7 +11,7 @@ import { auth } from "../utils/Auth";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { LoginWithGoogle } from "../utils/Auth";
-import { FaGoogle } from "react-icons/fa"; 
+import { FaGoogle } from "react-icons/fa";
 
 const SignUp: NextPage = () => {
   const [user, loading, error] = useAuthState(auth);
@@ -76,7 +76,7 @@ const SignUp: NextPage = () => {
           <Center height="100%" flex="1" mt={{ base: 0, lg: 20 }}>
             <Box width="container.sm" pt="8" px="8" textAlign="center">
               <Text fontWeight="bold" fontSize="2xl" mb={6} mt={{ base: 4, lg: 0 }}>
-                Sign Up to NexAI
+                Sign Up to gemini toolkit
               </Text>
               <Button
                 size="lg"
