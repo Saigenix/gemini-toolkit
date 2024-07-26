@@ -1,18 +1,12 @@
 import * as React from "react";
-import { HStack } from "@chakra-ui/react";
-
+import { HStack, Box, Menu, MenuButton, MenuList, MenuItem, Button, Avatar } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-
 import siteConfig from "data/config";
-
 import { NavLink } from "components/nav-link";
-
 import { useScrollSpy } from "hooks/use-scrollspy";
-
 import { MobileNavButton } from "components/mobile-nav";
 import { MobileNavContent } from "components/mobile-nav";
 import { useDisclosure, useUpdateEffect } from "@chakra-ui/react";
-
 import ThemeToggle from "./theme-toggle";
 
 const Navigation: React.FC = () => {
@@ -32,6 +26,10 @@ const Navigation: React.FC = () => {
   useUpdateEffect(() => {
     mobileNavBtnRef.current?.focus();
   }, [mobileNav.isOpen]);
+
+  const handleSignOut = () => {
+    console.log("Sign out");
+  };
 
   return (
     <HStack spacing="2" flexShrink={0}>
@@ -56,6 +54,26 @@ const Navigation: React.FC = () => {
 
       <ThemeToggle />
 
+      <Menu>
+        <MenuButton
+          as={Button}
+          variant="link"
+          rightIcon={<Avatar size="sm" name="User Name" src="path of image" />}
+          sx={{
+            textDecoration: 'none',
+            _hover: { textDecoration: 'none' },
+            _focus: { textDecoration: 'none' },
+            _active: { textDecoration: 'none' },
+          }}
+        >
+          User Name
+        </MenuButton>
+        <MenuList>
+          <MenuItem onClick={() => router.push('/profile')}>Profile</MenuItem>
+          <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
+        </MenuList>
+      </Menu>
+
       <MobileNavButton
         ref={mobileNavBtnRef}
         aria-label="Open Menu"
@@ -68,3 +86,5 @@ const Navigation: React.FC = () => {
 };
 
 export default Navigation;
+
+
