@@ -13,7 +13,7 @@ import { useSearchParams } from "next/navigation";
 
 const Tool: NextPage = ({data}: any) => {
   const searchParams = useSearchParams();
-  const search = searchParams?.get("toolName");
+  const search = searchParams?.get("toolID");
   console.log(search);
   const [user, loading, error] = useAuthState(auth);
   return (

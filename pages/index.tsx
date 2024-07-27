@@ -86,7 +86,7 @@ const HighlightsSection = ({tools}: any) => {
           </Text>
           <Flex justifyContent="space-between" alignItems="center" mt={3}>
             <ButtonGroup spacing={3} alignItems="center">
-              <ButtonLink marginTop={2} colorScheme="primary" fontSize="1.2rem" width={110} height={45} href={`/tool?toolName=${highlight.toolName}`}>
+              <ButtonLink marginTop={2} colorScheme="primary" fontSize="1.2rem" width={110} height={45} href={`/tool?toolID=${highlight.toolID}`}>
                 Use <FontAwesomeIcon style={{ marginLeft: '0.5rem' }} icon={faArrowUpRightFromSquare} />
               </ButtonLink>
             </ButtonGroup>
