@@ -41,3 +41,22 @@ export const getDocumentUsingToolID =async (toolID) => {
     return { data: null, error };
   }
 };
+
+export const getDocumentsByUserId = async (userId) => {
+  try {
+    const q = query(collection(db, "data"), where("userId", "==", userId));
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      const documents = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      return { data: documents, error: null };
+    } else {
+      return { data: [], error: null };
+    }
+  } catch (error) {
+    return { data: null, error };
+  }
+};
