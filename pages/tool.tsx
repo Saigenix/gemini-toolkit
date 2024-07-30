@@ -28,6 +28,7 @@ import {
 import { SEO } from "components/seo/seo";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCloudUploadAlt } from "@fortawesome/free-solid-svg-icons";
+import { useToast } from "@chakra-ui/react";
 
 const ToolPage: NextPage = ({}: any) => {
   // const [user, loading, error] = useAuthState(auth);
@@ -40,7 +41,7 @@ const ToolPage: NextPage = ({}: any) => {
   const [inputText, setInputText] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [showResponses, setShowResponses] = useState<boolean[]>([]);
-
+  const toast = useToast();
   useEffect(() => {
     const search = searchParams?.get("toolID");
     if (search) {
@@ -100,39 +101,57 @@ const ToolPage: NextPage = ({}: any) => {
   };
 
   useEffect(() => {
-    // console.log("gemini running...");
     if (geminiOutput.length == 0) {
       return;
     }
+    // if (geminiOutput.length == 0 && inputText != "") {
+    //   console.log("gemini running... empty");
+    //   const temprun = async () => {
+    //     setContentLoading(true);
+    //     console.log("current length", geminiOutput.length);
+    //     if (document && geminiOutput.length == 0) {
+    //       console.log(geminiOutput);
+    //       await generateGemini(document.prompts[0], inputText);
+    //     }
+    //     setContentLoading(false);
+    //   }
+    //   temprun();
+    // }
     if (
       document &&
       geminiOutput.length > 0 &&
       geminiOutput.length < document.prompts.length
     ) {
+      toast({
+        title: `Generating Next Response...`,
+        status: "info",
+        isClosable: true,
+      });
       const runNow = async () => {
         console.log(geminiOutput.length);
         await generateGemini(
           document.prompts[geminiOutput.length],
           geminiOutput[geminiOutput.length - 1]
         );
-      }
+      };
       runNow();
+      setShowResponses(geminiOutput.map(() => true));
     }
   }, [geminiOutput]);
   const handleSubmit = async () => {
-
-    setgeminiOutput([]);
+    setgeminiOutput(prev => []);
     if (inputText === "") {
       alert("Please enter some text");
       return;
     }
     setContentLoading(true);
+    console.log("current length", geminiOutput.length);
     if (document && geminiOutput.length == 0) {
       console.log(geminiOutput);
       await generateGemini(document.prompts[0], inputText);
     }
-    setShowResponses(geminiOutput.map(() => true));
     setContentLoading(false);
+
   };
 
   const toggleResponse = (index: number) => {
@@ -203,6 +222,7 @@ const ToolPage: NextPage = ({}: any) => {
                   size="lg"
                   onClick={handleSubmit}
                   mt={4}
+                  isDisabled={inputText === "" || contentLoading}
                 >
                   Submit
                 </Button>
@@ -297,7 +317,7 @@ const ToolPage: NextPage = ({}: any) => {
                   borderRadius="md"
                 >
                   <Heading fontSize="lg" mb={2}>
-                    {index +1 == geminiOutput.length ? "Final " : ""}
+                    {index + 1 == geminiOutput.length ? "Final " : ""}
                     Response {index + 1}
                     <Button
                       size="xs"
