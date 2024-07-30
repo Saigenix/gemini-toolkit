@@ -333,6 +333,8 @@ const ToolPage: NextPage = ({}: any) => {
                       isReadOnly
                       size="xl"
                       height={300}
+                      padding={5}
+                      background={"green"}
                     />
                   </Collapse>
                 </Box>
