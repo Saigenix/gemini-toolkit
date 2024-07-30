@@ -1,5 +1,6 @@
 "use client";
 import { Link } from "@saas-ui/react";
+import { flushSync } from "react-dom";
 import { BackgroundGradient } from "components/gradients/background-gradient";
 import { PageTransition } from "components/motion/page-transition";
 import { Section } from "components/section";
@@ -47,7 +48,7 @@ const ToolPage: NextPage = ({}: any) => {
     }
   }, [searchParams]);
 
-  async function generateGemini(prompt,input) {
+  async function generateGemini(prompt, input) {
     try {
       const response = await fetch("/api/gemini", {
         method: "POST",
@@ -66,8 +67,7 @@ const ToolPage: NextPage = ({}: any) => {
       }
 
       const data = await response.json();
-      console.log(data);
-      setgeminiOutput([...geminiOutput,data.content]);
+      setgeminiOutput((prev) => [...prev, data.content]);
     } catch (error) {
       console.error("Error calling API:", error);
       setgeminiOutput(["Something went wrong!!!"]);
@@ -80,7 +80,7 @@ const ToolPage: NextPage = ({}: any) => {
         setLoading(true);
         try {
           const { data, error } = await getDocumentUsingToolID(toolID);
-          console.log(data, toolID);
+          // console.log(data, toolID);
           if (error) throw error;
           setDocument(data);
         } catch (err) {
@@ -92,13 +92,6 @@ const ToolPage: NextPage = ({}: any) => {
     };
     fetchData();
   }, [toolID]);
-  // useEffect(() => {
-  //   if (document) {
-  //     for(let p in document.prompts){
-  //       generateGemini(p);
-  //     }
-  //   }
-  // }, [document]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -106,23 +99,38 @@ const ToolPage: NextPage = ({}: any) => {
     }
   };
 
+  useEffect(() => {
+    // console.log("gemini running...");
+    if (geminiOutput.length == 0) {
+      return;
+    }
+    if (
+      document &&
+      geminiOutput.length > 0 &&
+      geminiOutput.length < document.prompts.length
+    ) {
+      const runNow = async () => {
+        console.log(geminiOutput.length);
+        await generateGemini(
+          document.prompts[geminiOutput.length],
+          geminiOutput[geminiOutput.length - 1]
+        );
+      }
+      runNow();
+    }
+  }, [geminiOutput]);
   const handleSubmit = async () => {
 
+    setgeminiOutput([]);
     if (inputText === "") {
       alert("Please enter some text");
       return;
     }
     setContentLoading(true);
-    if (document) {
-      setgeminiOutput([inputText]);
-      for(let i=0;i<document.prompts.length;i++){
-        console.log(geminiOutput);
-        console.log(document.prompts[i],geminiOutput[i]);
-        await generateGemini(document.prompts[i], geminiOutput[i]);
-        setTimeout(() => {}, 1000);
-      }
+    if (document && geminiOutput.length == 0) {
+      console.log(geminiOutput);
+      await generateGemini(document.prompts[0], inputText);
     }
-    console.log(geminiOutput);
     setShowResponses(geminiOutput.map(() => true));
     setContentLoading(false);
   };
@@ -289,6 +297,7 @@ const ToolPage: NextPage = ({}: any) => {
                   borderRadius="md"
                 >
                   <Heading fontSize="lg" mb={2}>
+                    {index +1 == geminiOutput.length ? "Final " : ""}
                     Response {index + 1}
                     <Button
                       size="xs"
