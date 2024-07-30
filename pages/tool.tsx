@@ -1,6 +1,6 @@
 "use client";
 import { NextPage } from "next";
-import { Center, Spinner } from "@chakra-ui/react";
+import { Center, Spinner,Box } from "@chakra-ui/react";
 import { Link } from "@saas-ui/react";
 import { BackgroundGradient } from "components/gradients/background-gradient";
 import { PageTransition } from "components/motion/page-transition";
@@ -9,42 +9,71 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../utils/Auth";
 import { Heading } from "@chakra-ui/react";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { getDocumentUsingToolID } from "utils/firestore";
-
+import { GenerateTextOutput } from "utils/gemini.js";
 
 const Tool: NextPage = ({}: any) => {
   // const [user, loading, error] = useAuthState(auth);
-    const [toolID, setToolID] = useState<string | null>(null);
-    const [document, setDocument] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
-    const searchParams = useSearchParams();
+  const [toolID, setToolID] = useState<string | null>(null);
+  const [geminiOutput, setgeminiOutput] = useState<string | null>("default");
+  const [document, setDocument] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const searchParams = useSearchParams();
 
-    useEffect(() => {
-      const search = searchParams?.get("toolID");
-      if (search) {
-        setToolID(search);
+  useEffect(() => {
+    const search = searchParams?.get("toolID");
+    if (search) {
+      setToolID(search);
+    }
+  }, [searchParams]);
+
+  async function generateGemini() {
+    try {
+      const response = await fetch("/api/gemini", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt: document?.prompts, input:"about sai", type: document?.type }),
+      });
+
+      if (!response.ok) {
+        throw new Error("API request failed");
       }
-    }, [searchParams]);
 
-    useEffect(() => {
-      const fetchData = async () => {
-        if (toolID) {
-          setLoading(true);
-          try {
-            const { data, error } = await getDocumentUsingToolID(toolID);
-            console.log(data,toolID);
-            if (error) throw error;
-            setDocument(data);
-          } catch (err) {
-            console.log(err);
-          } finally {
-            setLoading(false);
-          }
+      const data = await response.json();
+      setgeminiOutput(data.content);
+    } catch (error) {
+      console.error("Error calling API:", error);
+      setgeminiOutput("Error occurred");
+    }
+  }
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (toolID) {
+        setLoading(true);
+        try {
+          const { data, error } = await getDocumentUsingToolID(toolID);
+          console.log(data, toolID);
+          if (error) throw error;
+          setDocument(data);
+        } catch (err) {
+          console.log(err);
+        } finally {
+          setLoading(false);
         }
-      };
-      fetchData();
-    }, [toolID]);
+      }
+    };
+    fetchData();
+  }, [toolID]);
+  useEffect(() => {
+    if (document) {
+      generateGemini();
+    }}, [document]);
+
+
   return (
     <Section height="calc(100vh - 200px)" innerWidth="container.sm">
       <BackgroundGradient zIndex="-1" />
@@ -64,7 +93,12 @@ const Tool: NextPage = ({}: any) => {
             />
           </Center>
         ) : (
-          <p>{document.creatorName}</p>
+          <>
+            <p>{document.creatorName}</p>
+            <Box>
+            <p>{geminiOutput}</p>
+            </Box>
+          </>
         )}
       </Center>
     </Section>
