@@ -12,7 +12,18 @@ import { GenerateTextOutput } from "utils/gemini.js";
 import * as React from "react";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import { Box, Button, Heading, Text, Center, Textarea, Input, Spinner, Collapse, FormLabel } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Heading,
+  Text,
+  Center,
+  Textarea,
+  Input,
+  Spinner,
+  Collapse,
+  FormLabel,
+} from "@chakra-ui/react";
 import { SEO } from "components/seo/seo";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCloudUploadAlt } from "@fortawesome/free-solid-svg-icons";
@@ -20,15 +31,14 @@ import { faCloudUploadAlt } from "@fortawesome/free-solid-svg-icons";
 const ToolPage: NextPage = ({}: any) => {
   // const [user, loading, error] = useAuthState(auth);
   const [toolID, setToolID] = useState<string | null>(null);
-  const [geminiOutput, setgeminiOutput] = useState<string | null>("default");
+  const [geminiOutput, setgeminiOutput] = useState<string[] | null[]>([]);
   const [document, setDocument] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [contentLoading, setContentLoading] = useState(false);
   const searchParams = useSearchParams();
   const [inputText, setInputText] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [responses, setResponses] = useState<string[]>([]);
   const [showResponses, setShowResponses] = useState<boolean[]>([]);
-  const router = useRouter();
 
   useEffect(() => {
     const search = searchParams?.get("toolID");
@@ -37,14 +47,18 @@ const ToolPage: NextPage = ({}: any) => {
     }
   }, [searchParams]);
 
-  async function generateGemini() {
+  async function generateGemini(prompt,input) {
     try {
       const response = await fetch("/api/gemini", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ prompt: document?.prompts, input:"about sai", type: document?.type }),
+        body: JSON.stringify({
+          prompt: prompt,
+          input: input,
+          type: document?.type,
+        }),
       });
 
       if (!response.ok) {
@@ -52,10 +66,11 @@ const ToolPage: NextPage = ({}: any) => {
       }
 
       const data = await response.json();
-      setgeminiOutput(data.content);
+      console.log(data);
+      setgeminiOutput([...geminiOutput,data.content]);
     } catch (error) {
       console.error("Error calling API:", error);
-      setgeminiOutput("Error occurred");
+      setgeminiOutput(["Something went wrong!!!"]);
     }
   }
 
@@ -77,16 +92,13 @@ const ToolPage: NextPage = ({}: any) => {
     };
     fetchData();
   }, [toolID]);
-  useEffect(() => {
-    if (document) {
-      generateGemini();
-    }}, [document]);
-
-  const toolData = {
-    toolName: "Tool Name",
-    description: "This is an example tool description.",
-    toolType: "both",
-  };
+  // useEffect(() => {
+  //   if (document) {
+  //     for(let p in document.prompts){
+  //       generateGemini(p);
+  //     }
+  //   }
+  // }, [document]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -94,10 +106,25 @@ const ToolPage: NextPage = ({}: any) => {
     }
   };
 
-  const handleSubmit = () => {
-    const newResponses = ["Response from Gemini"];
-    setResponses(newResponses);
-    setShowResponses(newResponses.map(() => false));
+  const handleSubmit = async () => {
+
+    if (inputText === "") {
+      alert("Please enter some text");
+      return;
+    }
+    setContentLoading(true);
+    if (document) {
+      setgeminiOutput([inputText]);
+      for(let i=0;i<document.prompts.length;i++){
+        console.log(geminiOutput);
+        console.log(document.prompts[i],geminiOutput[i]);
+        await generateGemini(document.prompts[i], geminiOutput[i]);
+        setTimeout(() => {}, 1000);
+      }
+    }
+    console.log(geminiOutput);
+    setShowResponses(geminiOutput.map(() => true));
+    setContentLoading(false);
   };
 
   const toggleResponse = (index: number) => {
@@ -111,7 +138,13 @@ const ToolPage: NextPage = ({}: any) => {
   if (loading) {
     return (
       <Center height="100%" pt="20">
-        <Spinner thickness="4px" speed="0.65s" emptyColor="gray.200" color="blue.500" size="xl" />
+        <Spinner
+          thickness="4px"
+          speed="0.65s"
+          emptyColor="gray.200"
+          color="blue.500"
+          size="xl"
+        />
       </Center>
     );
   }
@@ -121,47 +154,85 @@ const ToolPage: NextPage = ({}: any) => {
       <BackgroundGradient height={400} zIndex="-1" />
       <SEO title="Tool Page" description="Tool Details" />
       <Box display={{ base: "block", md: "flex" }} p={4}>
-        <Box flex={{ base: "none", md: "1" }} textAlign={{ base: "center", md: "left" }} borderRight="1px solid gray" pr={{ md: 4 }}>
-          <Heading fontSize={{ base: "20px", md: "24px" }} as="h2" size="lg" mt={5}>
-            {toolData.toolName}
+        <Box
+          flex={{ base: "none", md: "1" }}
+          textAlign={{ base: "center", md: "left" }}
+          borderRight="1px solid gray"
+          pr={{ md: 4 }}
+        >
+          <Heading
+            fontSize={{ base: "20px", md: "24px" }}
+            as="h2"
+            size="lg"
+            mt={5}
+          >
+            {document.toolName}
           </Heading>
           <Text mt={3} fontSize={{ base: "16px", md: "18px" }}>
-            {toolData.description}
+            {document.description}
           </Text>
         </Box>
 
-        <Box flex={{ base: "none", md: "3" }} ml={{ base: 0, md: 6 }} mt={{ base: 4, md: 0 }}>
+        <Box
+          flex={{ base: "none", md: "3" }}
+          ml={{ base: 0, md: 6 }}
+          mt={{ base: 4, md: 0 }}
+        >
           <Box mb={4}>
-            {toolData.toolType === "text" && (
+            {document.type === "text" && (
               <Box mb={4}>
-                <Text fontSize={18} fontWeight={600} pb={3}>Enter Text</Text>
+                <Text fontSize={18} fontWeight={600} pb={3}>
+                  Enter Text
+                </Text>
                 <Textarea
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
                   placeholder="Enter your text..."
                   size="lg"
                 />
-                <Button colorScheme="green" size="lg" onClick={handleSubmit} mt={4}>
+                <Button
+                  colorScheme="green"
+                  size="lg"
+                  onClick={handleSubmit}
+                  mt={4}
+                >
                   Submit
                 </Button>
               </Box>
             )}
-            {toolData.toolType === "image" && (
+            {document.type === "image" && (
               <Box mb={4} display="flex" alignItems="center">
-                <Button as="label" htmlFor="file-upload" colorScheme="purple" size="lg">
+                <Button
+                  as="label"
+                  htmlFor="file-upload"
+                  colorScheme="purple"
+                  size="lg"
+                >
                   <FontAwesomeIcon icon={faCloudUploadAlt} />
                   &nbsp;Upload Image
                 </Button>
-                <Input id="file-upload" type="file" onChange={handleFileChange} display="none" />
-                <Button colorScheme="green" size="lg" onClick={handleSubmit} ml={4}>
+                <Input
+                  id="file-upload"
+                  type="file"
+                  onChange={handleFileChange}
+                  display="none"
+                />
+                <Button
+                  colorScheme="green"
+                  size="lg"
+                  onClick={handleSubmit}
+                  ml={4}
+                >
                   Submit
                 </Button>
               </Box>
             )}
-            {toolData.toolType === "both" && (
+            {document.type === "both" && (
               <Box mb={4}>
                 <Box mb={4}>
-                  <Text fontSize={18} fontWeight={600} pb={3}>Enter Text</Text>
+                  <Text fontSize={18} fontWeight={600} pb={3}>
+                    Enter Text
+                  </Text>
                   <Textarea
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
@@ -170,12 +241,27 @@ const ToolPage: NextPage = ({}: any) => {
                   />
                 </Box>
                 <Box display="flex" alignItems="center">
-                  <Button as="label" htmlFor="file-upload" colorScheme="purple" size="lg">
+                  <Button
+                    as="label"
+                    htmlFor="file-upload"
+                    colorScheme="purple"
+                    size="lg"
+                  >
                     Upload Image &nbsp;
                     <FontAwesomeIcon icon={faCloudUploadAlt} />
                   </Button>
-                  <Input id="file-upload" type="file" onChange={handleFileChange} display="none" />
-                  <Button colorScheme="green" size="lg" onClick={handleSubmit} ml={4}>
+                  <Input
+                    id="file-upload"
+                    type="file"
+                    onChange={handleFileChange}
+                    display="none"
+                  />
+                  <Button
+                    colorScheme="green"
+                    size="lg"
+                    onClick={handleSubmit}
+                    ml={4}
+                  >
                     Submit
                   </Button>
                 </Box>
@@ -183,19 +269,46 @@ const ToolPage: NextPage = ({}: any) => {
             )}
           </Box>
           <Box>
-            {responses.map((response, index) => (
-              <Box key={index} mb={4} p={4} border="1px solid gray" borderRadius="md">
-                <Heading fontSize="lg" mb={2}>
-                  Response {index + 1}
-                  <Button size="xs" ml={4} onClick={() => toggleResponse(index)}>
-                    {showResponses[index] ? "Hide" : "Show"}
-                  </Button>
-                </Heading>
-                <Collapse in={showResponses[index]}>
-                  <Textarea value={response} isReadOnly size="lg" />
-                </Collapse>
-              </Box>
-            ))}
+            {contentLoading ? (
+              <Center height="100%" pt="20">
+                <Spinner
+                  thickness="2px"
+                  speed="0.65s"
+                  emptyColor="red.200"
+                  color="blue.500"
+                  size="lg"
+                />
+              </Center>
+            ) : (
+              geminiOutput.map((response, index) => (
+                <Box
+                  key={index}
+                  mb={4}
+                  p={4}
+                  border="1px solid gray"
+                  borderRadius="md"
+                >
+                  <Heading fontSize="lg" mb={2}>
+                    Response {index + 1}
+                    <Button
+                      size="xs"
+                      ml={4}
+                      onClick={() => toggleResponse(index)}
+                    >
+                      {showResponses[index] ? "Hide" : "Show"}
+                    </Button>
+                  </Heading>
+                  <Collapse in={showResponses[index]}>
+                    <Textarea
+                      value={response}
+                      isReadOnly
+                      size="xl"
+                      height={300}
+                    />
+                  </Collapse>
+                </Box>
+              ))
+            )}
           </Box>
         </Box>
       </Box>
@@ -204,5 +317,3 @@ const ToolPage: NextPage = ({}: any) => {
 };
 
 export default ToolPage;
-
-

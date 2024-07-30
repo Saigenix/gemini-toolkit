@@ -9,13 +9,10 @@ const INSTRUCTION_PROMPT =
 
 export const GenerateTextOutput = async (prompt, input, type) => {
   if (type === "text") {
-    var TempOutput = input;
-    for (let i = 0; i < prompt.length; i++) {
-      var combinedPrompt = `${prompt[i]}.${INSTRUCTION_PROMPT} \n \`\`\`${TempOutput}\`\`\` `;
-      console.log(combinedPrompt);
-      TempOutput = await GeminiOutText(combinedPrompt);
-    }
-    return TempOutput;
+    var combinedPrompt = `${prompt}.${INSTRUCTION_PROMPT} \n \`\`\`${input}\`\`\` `;
+    console.log(combinedPrompt);
+    const Output = await GeminiOutText(combinedPrompt);
+    return Output;
   } else if (type === "image") {
   } else if (type === "both") {
   } else {
@@ -27,5 +24,6 @@ const GeminiOutText = async (prompt) => {
   const result = await model.generateContent(prompt);
   const response = await result.response;
   const text = response.text();
+  console.log("text\n\n", text);
   return text;
 };
