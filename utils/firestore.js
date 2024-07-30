@@ -24,6 +24,8 @@ export const GetAllData = async () => {
   return arr;
 };
 
+
+
 export const getDocumentUsingToolID = async (toolID) => {
   try {
     const docRef = doc(db, "data", toolID);
@@ -68,5 +70,20 @@ export const updateDocumentStatus = async (id, status) => {
     return { success: false, error };
   }
 };
+
+export const saveTool = async (userId, toolId) => {
+  try {
+    const userDocRef = doc(db, "users", userId);
+    await updateDoc(userDocRef, {
+      savedTools: arrayUnion(toolId),
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('Error saving tool:', error);
+    return { success: false, error };
+  }
+};
+
+
 
 

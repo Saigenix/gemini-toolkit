@@ -88,6 +88,7 @@ const Navigation: React.FC = () => {
           </MenuButton>
           <MenuList>
             <MenuItem onClick={() => router.push("/profile")}>Profile</MenuItem>
+            <MenuItem onClick={() => router.push("/save")}>Saved Tools</MenuItem>
             <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
           </MenuList>
         </Menu>
