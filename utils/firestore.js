@@ -19,16 +19,13 @@ export const GetAllData = async () => {
   const querySnapshot = await getDocs(q);
   let arr = [];
   querySnapshot.forEach((doc) => {
-    // doc.data() is never undefined for query doc snapshots
-    // console.log(doc.id, " => ", doc.data());
     arr.push({ ...doc.data(), id: doc.id });
   });
-  //   console.log(arr[0])
   return arr;
 };
 
-export const getDocumentUsingToolID =async (toolID) => {
-   try {
+export const getDocumentUsingToolID = async (toolID) => {
+  try {
     const docRef = doc(db, "data", toolID);
     const docSnap = await getDoc(docRef);
 
@@ -60,3 +57,16 @@ export const getDocumentsByUserId = async (userId) => {
     return { data: null, error };
   }
 };
+
+export const updateDocumentStatus = async (id, status) => {
+  try {
+    const docRef = doc(db, "data", id);
+    await updateDoc(docRef, { status });
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating document status:', error);
+    return { success: false, error };
+  }
+};
+
+
