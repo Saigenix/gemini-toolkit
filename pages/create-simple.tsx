@@ -67,16 +67,6 @@ const CreateSimple: React.FC = () => {
                     _dark={{ bg: "gray.800" }}
                     mb={10}
                 >
-                    <FormControl mb={4}>
-                        <FormLabel>Type</FormLabel>
-                        <RadioGroup onChange={setType} value={type}>
-                            <Stack direction="row">
-                                <Radio value="text">Text</Radio>
-                                <Radio value="img">Image</Radio>
-                                <Radio value="both">Both</Radio>
-                            </Stack>
-                        </RadioGroup>
-                    </FormControl>
 
                     <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4} mb={4}>
                         <FormControl isRequired>
@@ -91,7 +81,17 @@ const CreateSimple: React.FC = () => {
                                 value={name}
                                 onChange={(e) => setName(e.target.value)}
                             />
+                        </FormControl>
 
+                        <FormControl mb={4}>
+                            <FormLabel>Type</FormLabel>
+                            <RadioGroup onChange={setType} value={type}>
+                                <Stack direction="row">
+                                    <Radio value="text">Text</Radio>
+                                    <Radio value="img">Image</Radio>
+                                    <Radio value="both">Both</Radio>
+                                </Stack>
+                            </RadioGroup>
                         </FormControl>
 
                     </SimpleGrid>
@@ -107,7 +107,7 @@ const CreateSimple: React.FC = () => {
                             <Textarea
                                 placeholder="Enter the description"
                                 value={description}
-                                onChange={(e) => setPrompt(e.target.value)}
+                                onChange={(e) => setDescription(e.target.value)}
                             />
                         </FormControl>
                         <FormControl isRequired>
