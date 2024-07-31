@@ -227,4 +227,3 @@ const HighlightsSection = ({ tools }: any) => {
 
 export default Home;
 
-
