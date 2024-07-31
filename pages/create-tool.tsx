@@ -134,7 +134,20 @@ const CreateTool: NextPage = () => {
                 value={additional}
                 onChange={(e) => setAdditional(e.target.value)}
               />
+
             </FormControl>
+
+            <Button
+              colorScheme="green"
+              size="lg"
+              height="45px"
+              width="145px"
+              fontSize="18px"
+              onClick={() => (window.location.href = "/")}
+              mt={4}
+            >
+              Submit
+            </Button>
 
 
           </Box>
