@@ -7,7 +7,7 @@ import { Section } from "components/section";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../utils/Auth";
 import { useSearchParams } from "next/navigation";
-import { use, useEffect, useState } from "react";
+import { use, useEffect, useState, useCallback, useRef } from "react";
 import { getDocumentUsingToolID } from "utils/firestore";
 import { GenerateTextOutput } from "utils/gemini.js";
 import * as React from "react";
@@ -42,6 +42,7 @@ const ToolPage: NextPage = ({}: any) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [showResponses, setShowResponses] = useState<boolean[]>([]);
   const toast = useToast();
+  const isFirstRun = useRef(true);
   useEffect(() => {
     const search = searchParams?.get("toolID");
     if (search) {
@@ -101,22 +102,24 @@ const ToolPage: NextPage = ({}: any) => {
   };
 
   useEffect(() => {
+    if (!isFirstRun.current) {
+      const temprun = async () => {
+        setContentLoading(true);
+        console.log("current length", geminiOutput.length);
+        if (document && geminiOutput.length == 0) {
+          console.log(geminiOutput);
+          await generateGemini(document.prompts[0], inputText);
+        }
+        setContentLoading(false);
+      }
+      temprun();
+    } else {
+      console.log("is first run");
+      isFirstRun.current = false;
+    }
     if (geminiOutput.length == 0) {
       return;
     }
-    // if (geminiOutput.length == 0 && inputText != "") {
-    //   console.log("gemini running... empty");
-    //   const temprun = async () => {
-    //     setContentLoading(true);
-    //     console.log("current length", geminiOutput.length);
-    //     if (document && geminiOutput.length == 0) {
-    //       console.log(geminiOutput);
-    //       await generateGemini(document.prompts[0], inputText);
-    //     }
-    //     setContentLoading(false);
-    //   }
-    //   temprun();
-    // }
     if (
       document &&
       geminiOutput.length > 0 &&
@@ -139,19 +142,11 @@ const ToolPage: NextPage = ({}: any) => {
     }
   }, [geminiOutput]);
   const handleSubmit = async () => {
-    setgeminiOutput(prev => []);
+    setgeminiOutput((prev) => []);
     if (inputText === "") {
       alert("Please enter some text");
       return;
     }
-    setContentLoading(true);
-    console.log("current length", geminiOutput.length);
-    if (document && geminiOutput.length == 0) {
-      console.log(geminiOutput);
-      await generateGemini(document.prompts[0], inputText);
-    }
-    setContentLoading(false);
-
   };
 
   const toggleResponse = (index: number) => {
