@@ -6,9 +6,10 @@ import {
   faArrowUpRightFromSquare,
   faScrewdriverWrench,
   faArrowRightLong,
+  faEdit,
 } from "@fortawesome/free-solid-svg-icons";
 import { SlActionRedo, SlHeart } from "react-icons/sl";
-import { BsBookmarkPlus } from "react-icons/bs";
+import { BsBookmarkPlus, BsHeartFill, BsHeart } from "react-icons/bs";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../utils/Auth";
 import {
@@ -19,35 +20,49 @@ import {
   Icon,
   Heading,
   Text,
-  Flex,
+  IconButton,
+  VStack,
   Switch,
-  Center,
+  Flex,
   Spinner,
+  Center,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+  useClipboard,
+  useToast,
 } from "@chakra-ui/react";
 import { SEO } from "components/seo/seo";
 import { BackgroundGradient } from "components/gradients/background-gradient";
 import { ButtonLink } from "components/button-link/button-link";
 import { Highlights, HighlightsItem } from "components/highlights";
 import { useState, useEffect } from "react";
-import { getDocumentsByUserId } from "utils/firestore";
+import { getDocumentsByUserId, updateDocumentStatus } from "utils/firestore";
 import { useRouter } from "next/router";
+import { GetAllData, saveTool } from "utils/firestore";
+
+
 const Profile: NextPage = () => {
   const [user, loading, error] = useAuthState(auth);
   const [documents, setDocuments] = useState<any>([]);
   const [loading1, setLoading] = useState(false);
   const router = useRouter();
+
   useEffect(() => {
     if (!user && !loading) {
       router.push("/");
     }
     const fetchData = async () => {
-      console.log(user);
       if (user) {
         setLoading(true);
         try {
           const { data, error } = await getDocumentsByUserId(user.uid);
           if (error) throw error;
-          console.log(data);
           setDocuments(data);
         } catch (err) {
           console.log(err);
@@ -58,7 +73,23 @@ const Profile: NextPage = () => {
     };
 
     fetchData();
-  }, [user]);
+  }, [user, loading]);
+
+  const togglePublicPrivate = async (index: number, id: string, status: boolean) => {
+    try {
+      const result = await updateDocumentStatus(id, !status);
+      if (result.success) {
+        const updatedHighlights = [...documents];
+        updatedHighlights[index].status = !status;
+        setDocuments(updatedHighlights);
+      } else {
+        console.error("Failed to update status", result.error);
+      }
+    } catch (error) {
+      console.error("Failed to toggle status", error);
+    }
+  };
+
   return (
     <Box>
       <SEO title="NexAI" description="Next Generation AI" />
@@ -69,7 +100,7 @@ const Profile: NextPage = () => {
         >
           <ExploreTools displayName={user?.displayName} />
         </Box>
-        <Box flex={{ base: "none", md: "6" }} ml={{ base: 0, md: 10 }}>
+        <Box flex={{ base: "none", md: "6" }} ml={{ base: 0, md: 10 }} mt={-5}>
           {loading1 ? (
             <Center height="100%" pt="20">
               <Spinner
@@ -81,9 +112,7 @@ const Profile: NextPage = () => {
               />
             </Center>
           ) : (
-            <>
-            <HighlightsSection highlightsData={documents} />
-            </>
+            <HighlightsSection highlightsData={documents} togglePublicPrivate={togglePublicPrivate} />
           )}
         </Box>
       </Box>
@@ -101,13 +130,13 @@ const ExploreTools = ({ displayName }: any) => {
           as="h1"
           size="xl"
           marginTop={20}
-          paddingBottom={5}
+          paddingBottom={0.5}
         >
-          Welcome{" "}
-          <Heading fontSize={25} mt={3}>
-            {displayName}
-          </Heading>
+          Welcome
         </Heading>
+        <Text fontSize={20}>
+          {displayName}
+        </Text>
         <Button
           colorScheme="purple"
           size="lg"
@@ -115,97 +144,191 @@ const ExploreTools = ({ displayName }: any) => {
           width="200px"
           fontSize="20px"
           onClick={() => (window.location.href = "/create-tool")}
-          mt={3}
+          mt={8}
         >
-          Create Tool{" "}
+          Create Tool
           <FontAwesomeIcon
             style={{ marginLeft: "0.5rem" }}
             icon={faScrewdriverWrench}
           />
         </Button>
-        <Heading
-          fontWeight={0}
-          fontSize={{ base: "15px", md: "20px" }}
-          as="h2"
-          size="lg"
-          mt={10}
-        >
-          Your Tools{" "}
-          <FontAwesomeIcon
-            style={{ marginLeft: "0.5rem" }}
-            icon={faArrowRightLong}
-          />
-        </Heading>
       </Container>
     </Box>
   );
 };
 
-const HighlightsSection = ({ highlightsData }) => {
+const HighlightsSection = ({ highlightsData, togglePublicPrivate }) => {
+  const router = useRouter();
+  const [likes, setLikes] = React.useState<{ [key: string]: number }>({});
+  const [saved, setSaved] = React.useState<{ [key: string]: boolean }>({});
+  const [shareToolId, setShareToolId] = React.useState<string | null>(null);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [link, setLink] = React.useState<string>("");
+  const { hasCopied, onCopy } = useClipboard(link);
+  const toast = useToast();
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      setLink(window.location.href);
+    }
+  }, []);
+
+  const handleLike = (toolId: string) => {
+    setLikes((prevLikes) => ({
+      ...prevLikes,
+      [toolId]: (prevLikes[toolId] || 0) + 1,
+    }));
+  };
+
+  const handleShare = (toolId: string) => {
+    setShareToolId(toolId);
+    if (navigator.share) {
+      navigator.share({
+        title: 'Gemini ToolKit',
+        url: `${window.location.origin}/tool?toolID=${toolId}`
+      }).catch(console.error);
+    } else {
+      onOpen();
+    }
+  };
+
+  const handleSave = async (toolId: string) => {
+    setSaved((prevSaved) => ({
+      ...prevSaved,
+      [toolId]: !prevSaved[toolId],
+    }));
+
+    if (!saved[toolId]) {
+      try {
+        await saveTool(toolId);
+        toast({
+          title: "Tool saved successfully.",
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+          position: "top-right",
+        });
+      } catch (error) {
+        console.error("Error saving tool:", error);
+        toast({
+          title: "Failed to save tool.",
+          description: "An error occurred while saving the tool.",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+          position: "top-right",
+        });
+      }
+    }
+  };
+
   return (
-    <Highlights>
-      <p>{highlightsData.length} Tools</p>
-      {highlightsData.map((highlight, index) => (
-        <HighlightsItem key={index} title={highlight.toolName}>
-          <Text color="muted" fontSize="lg">
-            {highlight.description}
-          </Text>
-          <Flex justifyContent="space-between" alignItems="center" mt={3}>
-            <ButtonGroup spacing={3} alignItems="center">
-              <ButtonLink
-                marginTop={2}
-                colorScheme="primary"
-                fontSize="1.2rem"
-                width={110}
-                height={45}
-                href={"/tool?toolID=" + highlight.id}
-              >
-                Use{" "}
-                <FontAwesomeIcon
-                  style={{ marginLeft: "0.5rem" }}
-                  icon={faArrowUpRightFromSquare}
-                />
-              </ButtonLink>
-            </ButtonGroup>
-          </Flex>
-          <Flex justifyContent="space-between" alignItems="center" mt={10}>
-            <Flex alignItems="center">
+    <Box>
+      <Heading
+        fontWeight={500}
+        fontSize={{ base: "15px", md: "20px" }}
+        as="h2"
+        size="lg"
+        mt={20}
+        textAlign={{ base: "center", md: "left" }}
+      >
+        Your Tools
+        <FontAwesomeIcon
+          style={{ marginLeft: "0.5rem", height: 20 }}
+          icon={faArrowRightLong}
+        />
+      </Heading>
+      <Text
+        fontWeight={500}
+        textAlign={{ base: "center", md: "left" }}
+        mt={3}
+        marginBottom={-15}
+      >
+        Total Tools: {highlightsData.length}
+      </Text>
+      <Highlights>
+        {highlightsData.map((highlight, index) => (
+          <HighlightsItem key={index} title={highlight.toolName}>
+            <Box position="relative">
               <Icon
-                as={SlHeart}
+                as={FontAwesomeIcon}
+                icon={faEdit}
                 boxSize="1.2rem"
+                position="absolute"
+                top={-20}
+                marginTop={5}
+                right="0.5rem"
                 cursor="pointer"
-                marginRight="1.2rem"
+                onClick={() => router.push(`/edit-tool?toolID=${highlight.id}`)}
               />
-              <Icon
-                as={SlActionRedo}
-                boxSize="1.2rem"
-                cursor="pointer"
-                marginRight="1.2rem"
-              />
-              <Icon
-                as={BsBookmarkPlus}
-                boxSize="1.2rem"
-                cursor="pointer"
-                marginRight="1.2rem"
-              />
-            </Flex>
-            <Flex alignItems="center">
-              <Text mr={2}>{highlight.status ? "Public" : "Private"}</Text>
-              <Switch
-                isChecked={highlight.status}
-                onChange={() => togglePublicPrivate(index)}
-                colorScheme="purple"
-              />
-            </Flex>
-          </Flex>
-        </HighlightsItem>
-      ))}
-    </Highlights>
+              <Text color="muted" fontSize="lg">
+                {highlight.description}
+              </Text>
+              <Flex justifyContent="space-between" alignItems="center" mt={3}>
+                <ButtonGroup spacing={3} alignItems="center">
+                  <ButtonLink
+                    marginTop={2}
+                    colorScheme="primary"
+                    fontSize="1.2rem"
+                    width={110}
+                    height={45}
+                    href={`/tool?toolID=${highlight.id}`}
+                  >
+                    Use
+                    <FontAwesomeIcon
+                      style={{ marginLeft: "0.5rem" }}
+                      icon={faArrowUpRightFromSquare}
+                    />
+                  </ButtonLink>
+                </ButtonGroup>
+              </Flex>
+              <Flex justifyContent="space-between" alignItems="center" mt={10}>
+                <Flex alignItems="center">
+                  <Flex alignItems="center" mr="1.2rem">
+                    <Icon
+                      as={likes[highlight.id] ? BsHeartFill : BsHeart}
+                      boxSize="1.2rem"
+                      cursor="pointer"
+                      marginRight="0.5rem"
+                      color={likes[highlight.id] ? "red" : "white"}
+                      onClick={() => handleLike(highlight.id)}
+                    />
+                    <Text color="white" fontSize="sm">{likes[highlight.id] || 0}</Text>
+                  </Flex>
+                  <Icon
+                    as={SlActionRedo}
+                    boxSize="1.2rem"
+                    cursor="pointer"
+                    marginRight="1.2rem"
+                    color="white"
+                    onClick={() => handleShare(highlight.id)}
+                  />
+                  <Icon
+                    as={BsBookmarkPlus}
+                    boxSize="1.2rem"
+                    cursor="pointer"
+                    marginRight="1.2rem"
+                    color={saved[highlight.id] ? "white" : "white"}
+                    onClick={() => handleSave(highlight.id)}
+                  />
+                </Flex>
+                <Flex alignItems="center">
+                  <Text mr={2}>{highlight.status ? "Public" : "Private"}</Text>
+                  <Switch
+                    isChecked={highlight.status}
+                    onChange={() => togglePublicPrivate(index, highlight.id, highlight.status)}
+                    colorScheme="purple"
+                  />
+                </Flex>
+              </Flex>
+            </Box>
+          </HighlightsItem>
+        ))}
+      </Highlights>
+    </Box>
   );
 };
 
-const togglePublicPrivate = (index: number) => {
-  console.log(`Toggled public/private status for tool at index: ${index}`);
-};
-
 export default Profile;
+
+

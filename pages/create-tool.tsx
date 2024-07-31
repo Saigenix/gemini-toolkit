@@ -83,7 +83,7 @@ const CreateTool: React.FC = () => {
               <Box display="flex" alignItems="center">
                 <FormLabel pb={0}>Name</FormLabel>
                 <Tooltip label="You have to Enter Tool Name here" placement="right" hasArrow>
-                  <FontAwesomeIcon style={{ marginBottom: 10 }} icon={faCircleQuestion} />
+                  <FontAwesomeIcon style={{ marginBottom: 10, height: 15 }} icon={faCircleQuestion} />
                 </Tooltip>
               </Box>
               <Input
@@ -98,7 +98,7 @@ const CreateTool: React.FC = () => {
               <Box display="flex" alignItems="center">
                 <FormLabel pb={0}>Description</FormLabel>
                 <Tooltip label="You have to Enter Tool Description here" placement="right" hasArrow>
-                  <FontAwesomeIcon style={{ marginBottom: 10 }} icon={faCircleQuestion} />
+                  <FontAwesomeIcon style={{ marginBottom: 10, height: 15 }} icon={faCircleQuestion} />
                 </Tooltip>
               </Box>
               <Input
@@ -114,7 +114,7 @@ const CreateTool: React.FC = () => {
               <Box display="flex" alignItems="center">
                 <FormLabel pb={0}>Prompt</FormLabel>
                 <Tooltip label="You have to Enter Prompt to Create Your AI Tool" placement="right" hasArrow>
-                  <FontAwesomeIcon style={{ marginBottom: 10 }} icon={faCircleQuestion} />
+                  <FontAwesomeIcon style={{ marginBottom: 10, height: 15 }} icon={faCircleQuestion} />
                 </Tooltip>
               </Box>
               <Textarea
@@ -128,7 +128,7 @@ const CreateTool: React.FC = () => {
               <Box display="flex" alignItems="center">
                 <FormLabel pb={0}>Extra Prompt</FormLabel>
                 <Tooltip label="You have to Enter Extra Prompt here" placement="right" hasArrow>
-                  <FontAwesomeIcon style={{ marginBottom: 10 }} icon={faCircleQuestion} />
+                  <FontAwesomeIcon style={{ marginBottom: 10, height: 15 }} icon={faCircleQuestion} />
                 </Tooltip>
               </Box>
               <Textarea
@@ -143,7 +143,7 @@ const CreateTool: React.FC = () => {
             <Box display="flex" alignItems="center">
               <FormLabel pb={0}>Additional</FormLabel>
               <Tooltip label="You Can Add Additional Content here" placement="right" hasArrow>
-                <FontAwesomeIcon style={{ marginBottom: 10 }} icon={faCircleQuestion} />
+                <FontAwesomeIcon style={{ marginBottom: 10, height: 15 }} icon={faCircleQuestion} />
               </Tooltip>
             </Box>
             <Textarea
@@ -163,5 +163,6 @@ const CreateTool: React.FC = () => {
 };
 
 export default CreateTool;
+
 
 
