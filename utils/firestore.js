@@ -85,5 +85,45 @@ export const saveTool = async (userId, toolId) => {
 };
 
 
+export const addSimpleTool = async ({
+  additional,
+  creatorName,
+  description,
+  img,
+  prompts,
+  stars,
+  status,
+  toolName,
+  type,
+  userId
+}) => {
+  try {
+    const docRef = await addDoc(collection(db, 'data'), {
+      additional,
+      creatorName,
+      description,
+      img,
+      prompts,
+      stars,
+      status,
+      toolName,
+      type,
+      userId,
+      createdAt: new Date() 
+    });
 
+    return {
+      success: true,
+      id: docRef.id,
+      error: null
+    };
+  } catch (error) {
+    console.error("Error adding document: ", error);
+    return {
+      success: false,
+      id: null,
+      error: error.message
+    };
+  }
+};
 

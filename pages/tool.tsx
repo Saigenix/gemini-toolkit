@@ -29,6 +29,7 @@ import { SEO } from "components/seo/seo";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCloudUploadAlt } from "@fortawesome/free-solid-svg-icons";
 import { useToast } from "@chakra-ui/react";
+import ReactMarkdown from "react-markdown";
 
 const ToolPage: NextPage = ({}: any) => {
   // const [user, loading, error] = useAuthState(auth);
@@ -111,7 +112,7 @@ const ToolPage: NextPage = ({}: any) => {
           await generateGemini(document.prompts[0], inputText);
         }
         setContentLoading(false);
-      }
+      };
       temprun();
     } else {
       console.log("is first run");
@@ -322,15 +323,74 @@ const ToolPage: NextPage = ({}: any) => {
                       {showResponses[index] ? "Hide" : "Show"}
                     </Button>
                   </Heading>
-                  <Collapse in={showResponses[index]}>
+
+                  {/* <Collapse in={showResponses[index]}>
                     <Textarea
                       value={response}
                       isReadOnly
                       size="xl"
                       height={300}
                       padding={5}
-                      background={"green"}
+                      background="transparent"
                     />
+                  </Collapse> */}
+                  <Collapse in={showResponses[index]}>
+                    <Box
+                      height={300}
+                      padding={8}
+                      background="linear-gradient(135deg, rgba(128, 0, 128, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%)"
+                      overflowY="auto"
+                      sx={{
+                        p: {
+                          marginBottom: "1rem",
+                          lineHeight: "1.6",
+                        },
+                        ul: {
+                          marginBottom: "1rem",
+                          paddingLeft: "2rem",
+                        },
+                        ol: {
+                          marginBottom: "1rem",
+                          paddingLeft: "2rem",
+                        },
+                        li: {
+                          marginBottom: "0.5rem",
+                        },
+                        h1: {
+                          fontSize: "2xl",
+                          marginBottom: "0.5rem",
+                        },
+                        h2: {
+                          fontSize: "xl",
+                          marginBottom: "0.5rem",
+                        },
+                        h3: {
+                          fontSize: "lg",
+                          marginBottom: "0.5rem",
+                        },
+                        h4: {
+                          fontSize: "md",
+                          marginBottom: "0.5rem",
+                        },
+                        h5: {
+                          fontSize: "sm",
+                          marginBottom: "0.5rem",
+                        },
+                        h6: {
+                          fontSize: "xs",
+                          marginBottom: "0.5rem",
+                        },
+                        blockquote: {
+                          padding: "1rem",
+                          margin: "1rem 0",
+                          borderLeft: "4px solid #ccc",
+                          backgroundColor: "#f9f9f9",
+                          fontStyle: "italic",
+                        },
+                      }}
+                    >
+                      <ReactMarkdown>{response}</ReactMarkdown>
+                    </Box>
                   </Collapse>
                 </Box>
               ))
