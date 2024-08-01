@@ -38,6 +38,7 @@ import {
 } from "components/highlights";
 import { GetAllData, saveTool } from "utils/firestore";
 import {requestPermission} from "utils/firebase-messaging";
+
 const Home: NextPage = () => {
   const [tools, setTools] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);

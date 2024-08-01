@@ -37,30 +37,29 @@ import {
   addEdge,
   applyEdgeChanges,
   applyNodeChanges,
+  Panel,
+  useReactFlow,
 } from "@xyflow/react";
-import TextUpdaterNode from "components/TextUpdaterNode";
+import { shallow } from "zustand/shallow";
+import { useStore } from "utils/store";
+import InputF from "components/nodes/input";
+import Prompt from "components/nodes/prompt";
+import Out from "components/nodes/Output";
 
-const initialNodes = [
-  {
-    id: "node-1",
-    type: "textUpdater",
-    position: { x: 0, y: 0 },
-    data: { value: 123 },
-  },
-  {
-    id: "input",
-    type: "output",
-    targetPosition: "top",
-    position: { x: 200, y: 200 },
-    data: { label: "input" },
-  },
-];
 
-const initialEdges = [
-  { id: "edge-1", source: "node-1", target: "input", sourceHandle: "a" },
-];
+const selector = (store) => ({
+  nodes: store.nodes,
+  edges: store.edges,
+  onNodesChange: store.onNodesChange,
+  onNodesDelete: store.onNodesDelete,
+  onEdgesChange: store.onEdgesChange,
+  onEdgesDelete: store.onEdgesDelete,
+  addEdge: store.addEdge,
+  addPrompt: () => store.createNode("prompt"),
+  addInput: () => store.createNode("input"),
+});
 
-const nodeTypes = { textUpdater: TextUpdaterNode };
+const nodeTypes = { input: InputF, prompt: Prompt, out: Out };
 
 const CreateTool: NextPage = () => {
   const { colorMode } = useColorMode();
@@ -69,21 +68,7 @@ const CreateTool: NextPage = () => {
   const [description, setDescription] = useState("");
   const [prompt, setPrompt] = useState([]);
   const [additional, setAdditional] = useState("");
-  const [nodes, setNodes] = useState<any>(initialNodes);
-  const [edges, setEdges] = useState(initialEdges);
-
-  const onNodesChange = useCallback(
-    (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
-    [setNodes]
-  );
-  const onEdgesChange = useCallback(
-    (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-    [setEdges]
-  );
-  const onConnect = useCallback(
-    (connection) => setEdges((eds) => addEdge(connection, eds)),
-    [setEdges]
-  );
+  const store = useStore(selector, shallow);
   return (
     <Box position="relative" overflow="hidden" p={{ base: 4, md: 8 }}>
       <BackgroundGradient height={400} zIndex="-1" />
@@ -201,7 +186,6 @@ const CreateTool: NextPage = () => {
                 value={additional}
                 onChange={(e) => setAdditional(e.target.value)}
               />
-
             </FormControl>
 
             <Button
@@ -215,7 +199,6 @@ const CreateTool: NextPage = () => {
             >
               Submit
             </Button>
-
           </Box>
           <Divider
             orientation="vertical"
@@ -231,16 +214,26 @@ const CreateTool: NextPage = () => {
           >
             <ReactFlow
               colorMode="dark"
-              nodes={nodes}
-              edges={edges}
-              onNodesChange={onNodesChange}
-              onEdgesChange={onEdgesChange}
-              onConnect={onConnect}
               nodeTypes={nodeTypes}
+              nodes={store.nodes}
+              edges={store.edges}
+              onNodesChange={store.onNodesChange}
+              onNodesDelete={store.onNodesDelete}
+              onEdgesChange={store.onEdgesChange}
+              onEdgesDelete={store.onEdgesDelete}
+              onConnect={store.addEdge}
               fitView
             >
-              <Background />
+              <Panel className={"space-x-4"} position="top-right">
+                <button
+                  className={"px-2 py-1 rounded bg-white shadow text-black font-normal"}
+                  onClick={store.addPrompt}
+                >
+                  Add Prompt
+                </button>
+              </Panel>
               <Controls />
+              <Background />
             </ReactFlow>
           </Box>
         </Flex>
