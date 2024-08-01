@@ -48,24 +48,16 @@ const initialNodes = [
     data: { value: 123 },
   },
   {
-    id: "node-2",
-    type: "output",
-    targetPosition: "top",
-    position: { x: 0, y: 200 },
-    data: { label: "node 2" },
-  },
-  {
-    id: "node-3",
+    id: "input",
     type: "output",
     targetPosition: "top",
     position: { x: 200, y: 200 },
-    data: { label: "node 3" },
+    data: { label: "input" },
   },
 ];
 
 const initialEdges = [
-  { id: "edge-1", source: "node-1", target: "node-2", sourceHandle: "a" },
-  { id: "edge-2", source: "node-1", target: "node-3", sourceHandle: "b" },
+  { id: "edge-1", source: "node-1", target: "input", sourceHandle: "a" },
 ];
 
 const nodeTypes = { textUpdater: TextUpdaterNode };
@@ -75,8 +67,7 @@ const CreateTool: NextPage = () => {
   const [type, setType] = useState("text");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [prompt, setPrompt] = useState("");
-  const [extraPrompt, setExtraPrompt] = useState("");
+  const [prompt, setPrompt] = useState([]);
   const [additional, setAdditional] = useState("");
   const [nodes, setNodes] = useState<any>(initialNodes);
   const [edges, setEdges] = useState(initialEdges);
