@@ -27,6 +27,7 @@
     "@saas-ui/auth": "^3.0.6",
     "@saas-ui/react": "^2.7.2",
     "@svgr/webpack": "^7.0.0",
+    "@uiw/react-markdown-preview": "^5.1.2",
     "@xyflow/react": "^12.0.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
@@ -35,6 +36,7 @@
     "firebase": "^10.12.4",
     "framer-motion": "^10.18.0",
     "lucide-react": "^0.416.0",
+    "nanoid": "^5.0.7",
     "next": "^14.2.5",
     "next-seo": "^6.5.0",
     "react": "18.2.0",
@@ -44,7 +46,8 @@
     "react-markdown": "^9.0.1",
     "react-remove-scroll": "^2.5.9",
     "tailwind-merge": "^2.4.0",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zustand": "^4.5.4"
   },
   "devDependencies": {
     "@babel/core": "^7.24.4",

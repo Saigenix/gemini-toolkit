@@ -1,3 +1,4 @@
+"use client";
 import * as React from "react";
 import type { NextPage } from "next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -36,6 +37,7 @@ import {
   HighlightsItem,
 } from "components/highlights";
 import { GetAllData, saveTool } from "utils/firestore";
+import {requestPermission} from "utils/firebase-messaging";
 
 const Home: NextPage = () => {
   const [tools, setTools] = React.useState<any[]>([]);
@@ -47,6 +49,7 @@ const Home: NextPage = () => {
       setTools(data);
       setLoading(false);
     });
+    // requestPermission();
   }, []);
 
   return (
@@ -226,5 +229,4 @@ const HighlightsSection = ({ tools }: any) => {
 };
 
 export default Home;
-
 

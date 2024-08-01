@@ -27,3 +27,4 @@ const GeminiOutText = async (prompt) => {
   console.log("text\n\n", text);
   return text;
 };
+
