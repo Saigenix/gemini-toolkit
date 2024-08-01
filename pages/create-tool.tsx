@@ -1,6 +1,7 @@
 "use client";
+
 import * as React from "react";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import type { NextPage } from "next";
 import {
   Container,
@@ -21,11 +22,53 @@ import {
   useColorMode,
 } from "@chakra-ui/react";
 import { BackgroundGradient } from "components/gradients/background-gradient";
-import { faCircleQuestion, faCircleInfo, faQuestion } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCircleQuestion,
+  faCircleInfo,
+  faQuestion,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "@xyflow/react/dist/style.css";
 import { useRouter } from "next/router";
-import { ReactFlow, Background, Controls } from "@xyflow/react";
+import {
+  ReactFlow,
+  Background,
+  Controls,
+  addEdge,
+  applyEdgeChanges,
+  applyNodeChanges,
+} from "@xyflow/react";
+import TextUpdaterNode from "components/TextUpdaterNode";
+
+const initialNodes = [
+  {
+    id: "node-1",
+    type: "textUpdater",
+    position: { x: 0, y: 0 },
+    data: { value: 123 },
+  },
+  {
+    id: "node-2",
+    type: "output",
+    targetPosition: "top",
+    position: { x: 0, y: 200 },
+    data: { label: "node 2" },
+  },
+  {
+    id: "node-3",
+    type: "output",
+    targetPosition: "top",
+    position: { x: 200, y: 200 },
+    data: { label: "node 3" },
+  },
+];
+
+const initialEdges = [
+  { id: "edge-1", source: "node-1", target: "node-2", sourceHandle: "a" },
+  { id: "edge-2", source: "node-1", target: "node-3", sourceHandle: "b" },
+];
+
+const nodeTypes = { textUpdater: TextUpdaterNode };
 
 const CreateTool: NextPage = () => {
   const { colorMode } = useColorMode();
@@ -35,24 +78,21 @@ const CreateTool: NextPage = () => {
   const [prompt, setPrompt] = useState("");
   const [extraPrompt, setExtraPrompt] = useState("");
   const [additional, setAdditional] = useState("");
+  const [nodes, setNodes] = useState<any>(initialNodes);
+  const [edges, setEdges] = useState(initialEdges);
 
-  const nodes = [
-    {
-      id: "1",
-      position: { x: 0, y: 0 },
-      data: { label: "prompt" },
-      type: "input",
-      draggable: true,
-    },
-    {
-      id: "2",
-      position: { x: 100, y: 100 },
-      data: { label: "prompt" },
-    },
-  ];
-
-  const edges = [{ id: "1-2", source: "1", target: "2" }];
-
+  const onNodesChange = useCallback(
+    (changes) => setNodes((nds) => applyNodeChanges(changes, nds)),
+    [setNodes]
+  );
+  const onEdgesChange = useCallback(
+    (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
+    [setEdges]
+  );
+  const onConnect = useCallback(
+    (connection) => setEdges((eds) => addEdge(connection, eds)),
+    [setEdges]
+  );
   return (
     <Box position="relative" overflow="hidden" p={{ base: 4, md: 8 }}>
       <BackgroundGradient height={400} zIndex="-1" />
@@ -60,10 +100,17 @@ const CreateTool: NextPage = () => {
         <Flex justifyContent="space-between" mb={4} alignItems="center">
           <Heading size="md">Tool Details</Heading>
           <Flex alignItems="center">
-            <Button colorScheme="purple" onClick={() => (window.location.href = "/create-simple")}>
+            <Button
+              colorScheme="purple"
+              onClick={() => (window.location.href = "/create-simple")}
+            >
               Create Simple Tool
             </Button>
-            <Tooltip label="How to create a simple tool" placement="bottom" hasArrow>
+            <Tooltip
+              label="How to create a simple tool"
+              placement="bottom"
+              hasArrow
+            >
               <FontAwesomeIcon
                 icon={faCircleInfo}
                 style={{ marginLeft: 8, height: 25 }}
@@ -84,7 +131,9 @@ const CreateTool: NextPage = () => {
             mx={{ base: "auto", md: "0" }}
           >
             <FormControl mb={4}>
-              <FormLabel pb={0} fontSize={15} mt={3}>Type</FormLabel>
+              <FormLabel pb={0} fontSize={15} mt={3}>
+                Type
+              </FormLabel>
               <RadioGroup onChange={setType} value={type}>
                 <Stack direction="row">
                   <Radio value="text">Text</Radio>
@@ -96,9 +145,18 @@ const CreateTool: NextPage = () => {
 
             <FormControl isRequired>
               <Box display="flex" alignItems="center">
-                <FormLabel pb={0} fontSize={15} mt={3}>Name</FormLabel>
-                <Tooltip label="You have to Enter Tool Name here" placement="right" hasArrow>
-                  <FontAwesomeIcon style={{ marginTop: 1, height: 15 }} icon={faCircleQuestion} />
+                <FormLabel pb={0} fontSize={15} mt={3}>
+                  Name
+                </FormLabel>
+                <Tooltip
+                  label="You have to Enter Tool Name here"
+                  placement="right"
+                  hasArrow
+                >
+                  <FontAwesomeIcon
+                    style={{ marginTop: 1, height: 15 }}
+                    icon={faCircleQuestion}
+                  />
                 </Tooltip>
               </Box>
               <Input
@@ -110,9 +168,18 @@ const CreateTool: NextPage = () => {
 
             <FormControl isRequired>
               <Box display="flex" alignItems="center">
-                <FormLabel pb={0} fontSize={15} mt={3}>Description</FormLabel>
-                <Tooltip label="You have to Enter Tool Description here" placement="right" hasArrow>
-                  <FontAwesomeIcon style={{ marginTop: 1, height: 15 }} icon={faCircleQuestion} />
+                <FormLabel pb={0} fontSize={15} mt={3}>
+                  Description
+                </FormLabel>
+                <Tooltip
+                  label="You have to Enter Tool Description here"
+                  placement="right"
+                  hasArrow
+                >
+                  <FontAwesomeIcon
+                    style={{ marginTop: 1, height: 15 }}
+                    icon={faCircleQuestion}
+                  />
                 </Tooltip>
               </Box>
               <Textarea
@@ -124,9 +191,18 @@ const CreateTool: NextPage = () => {
 
             <FormControl isRequired>
               <Box display="flex" alignItems="center">
-                <FormLabel pb={0} fontSize={15} mt={3}>Additional</FormLabel>
-                <Tooltip label="You have to enter additional details here" placement="right" hasArrow>
-                  <FontAwesomeIcon style={{ marginTop: 1, height: 15 }} icon={faCircleQuestion} />
+                <FormLabel pb={0} fontSize={15} mt={3}>
+                  Additional
+                </FormLabel>
+                <Tooltip
+                  label="You have to enter additional details here"
+                  placement="right"
+                  hasArrow
+                >
+                  <FontAwesomeIcon
+                    style={{ marginTop: 1, height: 15 }}
+                    icon={faCircleQuestion}
+                  />
                 </Tooltip>
               </Box>
               <Textarea
@@ -150,7 +226,10 @@ const CreateTool: NextPage = () => {
             </Button>
 
           </Box>
-          <Divider orientation="vertical" display={{ base: "none", md: "block" }} />
+          <Divider
+            orientation="vertical"
+            display={{ base: "none", md: "block" }}
+          />
           <Box
             width={{ base: "100%", md: "70%" }}
             padding={2}
@@ -159,7 +238,16 @@ const CreateTool: NextPage = () => {
             display={{ base: "block", md: "block" }}
             height={{ base: "400px", md: "100%" }}
           >
-            <ReactFlow colorMode="dark" nodes={nodes} edges={edges} fitView>
+            <ReactFlow
+              colorMode="dark"
+              nodes={nodes}
+              edges={edges}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              onConnect={onConnect}
+              nodeTypes={nodeTypes}
+              fitView
+            >
               <Background />
               <Controls />
             </ReactFlow>
@@ -171,6 +259,4 @@ const CreateTool: NextPage = () => {
 };
 
 export default CreateTool;
-
-
 
