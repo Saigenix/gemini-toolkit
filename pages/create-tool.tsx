@@ -44,7 +44,7 @@ import { shallow } from "zustand/shallow";
 import { useStore } from "utils/store";
 import InputF from "components/nodes/input";
 import Prompt from "components/nodes/prompt";
-import Out from "components/nodes/Output";
+import Out from "components/nodes/output";
 
 
 const selector = (store) => ({
