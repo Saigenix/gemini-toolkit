@@ -143,13 +143,11 @@ const HighlightsSection = ({ tools }: { tools: any[] }) => {
                             boxSize="1.2rem"
                             cursor="pointer"
                             marginRight="1.2rem"
-                            color="white"
                             onClick={() => handleShare(highlight.id)}
                         />
                         <Icon
                             as={BsBookmarkPlus}
                             boxSize="1.2rem"
-                            color="white"
                             marginRight="1.2rem"
                         />
                     </Flex>

@@ -5,6 +5,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 import { SlActionRedo, SlHeart } from "react-icons/sl";
 import { BsBookmarkPlus, BsHeartFill, BsHeart } from "react-icons/bs";
+import { css, keyframes } from "@emotion/react";
+import geminiLogo from "../public/static/images/gemini.png";
+
 import {
   Container,
   Box,
@@ -18,6 +21,9 @@ import {
   Flex,
   Spinner,
   Center,
+  Input,
+  InputGroup,
+  InputRightElement,
   Modal,
   ModalOverlay,
   ModalContent,
@@ -32,31 +38,87 @@ import {
 import { SEO } from "components/seo/seo";
 import { BackgroundGradient } from "components/gradients/background-gradient";
 import { ButtonLink } from "components/button-link/button-link";
-import {
-  Highlights,
-  HighlightsItem,
-} from "components/highlights";
+import { Highlights, HighlightsItem } from "components/highlights";
 import { GetAllData, saveTool } from "utils/firestore";
-import {requestPermission} from "utils/firebase-messaging";
+import { requestPermission } from "utils/firebase-messaging";
 
 const Home: NextPage = () => {
   const [tools, setTools] = React.useState<any[]>([]);
+  const [filteredTools, setFilteredTools] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const [searchTerm, setSearchTerm] = React.useState("");
 
   React.useEffect(() => {
     GetAllData().then((data) => {
       console.log(data);
       setTools(data);
+      setFilteredTools(data);
       setLoading(false);
     });
     // requestPermission();
   }, []);
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const term = e.target.value.toLowerCase();
+    setSearchTerm(term);
+    if (term === "") {
+      setFilteredTools(tools);
+    } else {
+      setFilteredTools(
+        tools.filter(
+          (tool) =>
+            tool.toolName.toLowerCase().includes(term) ||
+            tool.description.toLowerCase().includes(term)
+        )
+      );
+    }
+  };
+
+  const glowing = keyframes`
+  0% {
+    border-color: #805AD5;
+    box-shadow: 0 0 5px #805AD5;
+  }
+  50% {
+    border-color: #B794F4;
+    box-shadow: 0 0 20px #B794F4;
+  }
+  100% {
+    border-color: #805AD5;
+    box-shadow: 0 0 5px #805AD5;
+  }
+`;
 
   return (
     <Box>
       <SEO title="Gemini ToolKit" description="Next Generation AI" />
       <Box>
         <ExploreTools />
+        <Container maxW="container.xl" textAlign="center" pb={3}>
+          <InputGroup
+            size="md"
+            maxW="lg"
+            mx="auto"
+            mt={5}
+            borderRadius="full"
+            borderColor="purple.500"
+            boxShadow="md"
+            sx={{
+              animation: `${glowing} 2s infinite`,
+            }}
+          >
+            <Input
+              pr="4.5rem"
+              padding={5}
+              placeholder="Search For Tools "
+              value={searchTerm}
+              onChange={handleSearch}
+              borderRadius="full"
+              focusBorderColor="purple.500"
+            />
+            <InputRightElement width="4.5rem" />
+          </InputGroup>
+        </Container>
         {loading ? (
           <Center height="100%" pt="20">
             <Spinner
@@ -68,7 +130,7 @@ const Home: NextPage = () => {
             />
           </Center>
         ) : null}
-        <HighlightsSection tools={tools} />
+        <HighlightsSection tools={filteredTools} />
       </Box>
     </Box>
   );
@@ -112,10 +174,12 @@ const HighlightsSection = ({ tools }: any) => {
   const handleShare = (toolId: string) => {
     setShareToolId(toolId);
     if (navigator.share) {
-      navigator.share({
-        title: 'Gemini ToolKit',
-        url: `${window.location.origin}/tool?toolID=${toolId}`
-      }).catch(console.error);
+      navigator
+        .share({
+          title: "Gemini ToolKit",
+          url: `${window.location.origin}/tool?toolID=${toolId}`,
+        })
+        .catch(console.error);
     } else {
       onOpen();
     }
@@ -151,13 +215,40 @@ const HighlightsSection = ({ tools }: any) => {
     }
   };
 
+  const circularMotion = keyframes`
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+`;
+
   return (
     <Highlights>
       {tools.map((highlight, index) => (
-        <HighlightsItem key={index} title={highlight.toolName}>
+        <HighlightsItem
+          key={index}
+          title={highlight.toolName}
+          position="relative"
+        >
           <Text color="muted" fontSize="lg">
             {highlight.description}
           </Text>
+          <Box
+            as="img"
+            src={geminiLogo.src}
+            alt="Gemini Logo"
+            boxSize="1.5rem"
+            position="absolute"
+            top={0}
+            right={0}
+            margin={2}
+            css={css`
+              animation: ${circularMotion} 4s linear infinite;
+              filter: saturate(2);
+            `}
+          />
           <Flex justifyContent="space-between" alignItems="center" mt={3}>
             <ButtonGroup spacing={3} alignItems="center">
               <ButtonLink
@@ -168,7 +259,11 @@ const HighlightsSection = ({ tools }: any) => {
                 height={45}
                 href={`/tool?toolID=${highlight.id}`}
               >
-                Use <FontAwesomeIcon style={{ marginLeft: "0.5rem" }} icon={faArrowUpRightFromSquare} />
+                Use{" "}
+                <FontAwesomeIcon
+                  style={{ marginLeft: "0.5rem" }}
+                  icon={faArrowUpRightFromSquare}
+                />
               </ButtonLink>
             </ButtonGroup>
           </Flex>
@@ -179,17 +274,16 @@ const HighlightsSection = ({ tools }: any) => {
                 boxSize="1.2rem"
                 cursor="pointer"
                 marginRight="0.5rem"
-                color={likes[highlight.id] ? "red" : "white"}
+                color={likes[highlight.id] ? "red" : ""}
                 onClick={() => handleLike(highlight.id)}
               />
-              <Text color="white" fontSize="sm">{likes[highlight.id] || 0}</Text>
+              <Text fontSize="sm">{likes[highlight.id] || 0}</Text>
             </Flex>
             <Icon
               as={SlActionRedo}
               boxSize="1.2rem"
               cursor="pointer"
               marginRight="1.2rem"
-              color="white"
               onClick={() => handleShare(highlight.id)}
             />
             <Icon
@@ -197,7 +291,7 @@ const HighlightsSection = ({ tools }: any) => {
               boxSize="1.2rem"
               cursor="pointer"
               marginRight="1.2rem"
-              color={saved[highlight.id] ? "white" : "white"}
+              color={saved[highlight.id] ? "" : ""}
               onClick={() => handleSave(highlight.id)}
             />
           </Flex>
@@ -211,10 +305,48 @@ const HighlightsSection = ({ tools }: any) => {
           <ModalCloseButton />
           <ModalBody>
             <ButtonGroup spacing={4}>
-              <Button colorScheme="whatsapp" onClick={() => window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(`${window.location.origin}/tool?toolID=${shareToolId}`)}`, '_blank')}>WhatsApp</Button>
-              <Button colorScheme="linkedin" onClick={() => window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`${window.location.origin}/tool?toolID=${shareToolId}`)}`, '_blank')}>LinkedIn</Button>
-              <Button colorScheme="red" onClick={() => window.open(`https://www.instagram.com/?url=${encodeURIComponent(`${window.location.origin}/tool?toolID=${shareToolId}`)}`, '_blank')}>Instagram</Button>
-              <Button onClick={onCopy}>{hasCopied ? "Link Copied" : "Copy Link"}</Button>
+              <Button
+                colorScheme="whatsapp"
+                onClick={() =>
+                  window.open(
+                    `https://api.whatsapp.com/send?text=${encodeURIComponent(
+                      `${window.location.origin}/tool?toolID=${shareToolId}`
+                    )}`,
+                    "_blank"
+                  )
+                }
+              >
+                WhatsApp
+              </Button>
+              <Button
+                colorScheme="linkedin"
+                onClick={() =>
+                  window.open(
+                    `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+                      `${window.location.origin}/tool?toolID=${shareToolId}`
+                    )}`,
+                    "_blank"
+                  )
+                }
+              >
+                LinkedIn
+              </Button>
+              <Button
+                colorScheme="red"
+                onClick={() =>
+                  window.open(
+                    `https://www.instagram.com/?url=${encodeURIComponent(
+                      `${window.location.origin}/tool?toolID=${shareToolId}`
+                    )}`,
+                    "_blank"
+                  )
+                }
+              >
+                Instagram
+              </Button>
+              <Button onClick={onCopy}>
+                {hasCopied ? "Link Copied" : "Copy Link"}
+              </Button>
             </ButtonGroup>
           </ModalBody>
           <ModalFooter>
