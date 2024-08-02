@@ -46,13 +46,11 @@ import { getDocumentsByUserId, updateDocumentStatus } from "utils/firestore";
 import { useRouter } from "next/router";
 import { GetAllData, saveTool } from "utils/firestore";
 
-
 const Profile: NextPage = () => {
   const [user, loading, error] = useAuthState(auth);
   const [documents, setDocuments] = useState<any>([]);
   const [loading1, setLoading] = useState(false);
   const router = useRouter();
-
   useEffect(() => {
     if (!user && !loading) {
       router.push("/");
@@ -75,7 +73,11 @@ const Profile: NextPage = () => {
     fetchData();
   }, [user, loading]);
 
-  const togglePublicPrivate = async (index: number, id: string, status: boolean) => {
+  const togglePublicPrivate = async (
+    index: number,
+    id: string,
+    status: boolean
+  ) => {
     try {
       const result = await updateDocumentStatus(id, !status);
       if (result.success) {
@@ -112,7 +114,10 @@ const Profile: NextPage = () => {
               />
             </Center>
           ) : (
-            <HighlightsSection highlightsData={documents} togglePublicPrivate={togglePublicPrivate} />
+            <HighlightsSection
+              highlightsData={documents}
+              togglePublicPrivate={togglePublicPrivate}
+            />
           )}
         </Box>
       </Box>
@@ -134,9 +139,7 @@ const ExploreTools = ({ displayName }: any) => {
         >
           Welcome
         </Heading>
-        <Text fontSize={20}>
-          {displayName}
-        </Text>
+        <Text fontSize={20}>{displayName}</Text>
         <Button
           colorScheme="purple"
           size="lg"
@@ -183,10 +186,12 @@ const HighlightsSection = ({ highlightsData, togglePublicPrivate }) => {
   const handleShare = (toolId: string) => {
     setShareToolId(toolId);
     if (navigator.share) {
-      navigator.share({
-        title: 'Gemini ToolKit',
-        url: `${window.location.origin}/tool?toolID=${toolId}`
-      }).catch(console.error);
+      navigator
+        .share({
+          title: "Gemini ToolKit",
+          url: `${window.location.origin}/tool?toolID=${toolId}`,
+        })
+        .catch(console.error);
     } else {
       onOpen();
     }
@@ -249,18 +254,17 @@ const HighlightsSection = ({ highlightsData, togglePublicPrivate }) => {
       <Highlights>
         {highlightsData.map((highlight, index) => (
           <HighlightsItem key={index} title={highlight.toolName}>
+            <Icon
+              as={FontAwesomeIcon}
+              icon={faEdit}
+              boxSize="1.2rem"
+              position="absolute"
+              top={9}
+              right={4}
+              cursor="pointer"
+              onClick={() => router.push(`/edit-tool?toolID=${highlight.id}`)}
+            />
             <Box position="relative">
-              <Icon
-                as={FontAwesomeIcon}
-                icon={faEdit}
-                boxSize="1.2rem"
-                position="absolute"
-                top={-20}
-                marginTop={5}
-                right="0.5rem"
-                cursor="pointer"
-                onClick={() => router.push(`/edit-tool?toolID=${highlight.id}`)}
-              />
               <Text color="muted" fontSize="lg">
                 {highlight.description}
               </Text>
@@ -290,17 +294,18 @@ const HighlightsSection = ({ highlightsData, togglePublicPrivate }) => {
                       boxSize="1.2rem"
                       cursor="pointer"
                       marginRight="0.5rem"
-                      color={likes[highlight.id] ? "red" : "white"}
+                      color={likes[highlight.id] ? "red" : ""}
                       onClick={() => handleLike(highlight.id)}
                     />
-                    <Text color="white" fontSize="sm">{likes[highlight.id] || 0}</Text>
+                    <Text fontSize="sm">
+                      {likes[highlight.id] || 0}
+                    </Text>
                   </Flex>
                   <Icon
                     as={SlActionRedo}
                     boxSize="1.2rem"
                     cursor="pointer"
                     marginRight="1.2rem"
-                    color="white"
                     onClick={() => handleShare(highlight.id)}
                   />
                   <Icon
@@ -308,16 +313,21 @@ const HighlightsSection = ({ highlightsData, togglePublicPrivate }) => {
                     boxSize="1.2rem"
                     cursor="pointer"
                     marginRight="1.2rem"
-                    color={saved[highlight.id] ? "white" : "white"}
+                    color={saved[highlight.id] ? "" : ""}
                     onClick={() => handleSave(highlight.id)}
                   />
                 </Flex>
                 <Flex alignItems="center">
-                  <Text mr={2}>{highlight.status ? "Public" : "Private"}</Text>
+                  <Text paddingLeft={8}>
+                    {highlight.status ? "Public" : "Private"}
+                  </Text>
                   <Switch
+                    paddingLeft={2}
                     isChecked={highlight.status}
-                    onChange={() => togglePublicPrivate(index, highlight.id, highlight.status)}
-                    colorScheme="purple"
+                    onChange={() =>
+                      togglePublicPrivate(index, highlight.id, highlight.status)
+                    }
+                    colorScheme="green"
                   />
                 </Flex>
               </Flex>
@@ -330,5 +340,3 @@ const HighlightsSection = ({ highlightsData, togglePublicPrivate }) => {
 };
 
 export default Profile;
-
-

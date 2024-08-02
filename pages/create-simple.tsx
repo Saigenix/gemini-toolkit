@@ -18,6 +18,7 @@ import {
   Tooltip,
   useToast,
   SimpleGrid,
+  Spinner,
 } from "@chakra-ui/react";
 import { BackgroundGradient } from "components/gradients/background-gradient";
 import { auth } from "../utils/Auth";
@@ -33,6 +34,7 @@ const CreateSimple: React.FC = () => {
   const [prompt, setPrompt] = useState("");
   const [extraPrompt, setExtraPrompt] = useState("");
   const [additional, setAdditional] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
   const router = useRouter();
   const [user, loading, error] = useAuthState(auth);
 
@@ -54,6 +56,8 @@ const CreateSimple: React.FC = () => {
       return;
     }
 
+    setIsCreating(true);
+
     const result = await addSimpleTool({
       additional,
       creatorName: user?.displayName || "",
@@ -66,6 +70,8 @@ const CreateSimple: React.FC = () => {
       type,
       userId: user?.uid || "",
     });
+
+    setIsCreating(false);
 
     if (result.success) {
       toast({
@@ -93,6 +99,8 @@ const CreateSimple: React.FC = () => {
       console.error("Failed to add document: ", result.error);
     }
   };
+
+  const isFormValid = name && description && prompt;
 
   return (
     <Box position="relative" overflow="hidden" p={{ base: 4, md: 8 }}>
@@ -187,7 +195,7 @@ const CreateSimple: React.FC = () => {
             </FormControl>
           </SimpleGrid>
 
-          <FormControl mb={4} isRequired>
+          <FormControl mb={4}>
             <Box display="flex" alignItems="center">
               <FormLabel pb={0}>Additional</FormLabel>
               <Tooltip
@@ -208,8 +216,13 @@ const CreateSimple: React.FC = () => {
             />
           </FormControl>
 
-          <Button colorScheme="purple" width="full" onClick={handleSubmit}>
-            Create
+          <Button
+            colorScheme="purple"
+            width="full"
+            onClick={handleSubmit}
+            isDisabled={!isFormValid || isCreating}
+          >
+            {isCreating ? <Spinner size="sm" /> : "Create"}
           </Button>
         </Box>
       </Container>
@@ -218,3 +231,4 @@ const CreateSimple: React.FC = () => {
 };
 
 export default CreateSimple;
+
