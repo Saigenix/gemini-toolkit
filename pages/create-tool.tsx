@@ -1,5 +1,4 @@
 "use client";
-
 import * as React from "react";
 import { useState, useCallback } from "react";
 import type { NextPage } from "next";
@@ -20,6 +19,8 @@ import {
   Button,
   Divider,
   useColorMode,
+  useToast,
+  Spinner,
 } from "@chakra-ui/react";
 import { BackgroundGradient } from "components/gradients/background-gradient";
 import {
@@ -29,7 +30,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "@xyflow/react/dist/style.css";
-import { useRouter } from "next/router";
 import {
   ReactFlow,
   Background,
@@ -45,7 +45,8 @@ import { useStore } from "utils/store";
 import InputF from "components/nodes/input";
 import Prompt from "components/nodes/prompt";
 import Out from "components/nodes/output";
-
+import isAuth from "hooks/isAuth";
+import { addSimpleTool } from "utils/firestore";
 
 const selector = (store) => ({
   nodes: store.nodes,
@@ -57,18 +58,100 @@ const selector = (store) => ({
   addEdge: store.addEdge,
   addPrompt: () => store.createNode("prompt"),
   addInput: () => store.createNode("input"),
+  makeEmpty: () => store.makeEmpty(),
 });
 
 const nodeTypes = { input: InputF, prompt: Prompt, out: Out };
 
-const CreateTool: NextPage = () => {
+const CreateTool: NextPage = ({ user }: any) => {
+  const toast = useToast();
   const { colorMode } = useColorMode();
-  const [type, setType] = useState("text");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [prompt, setPrompt] = useState([]);
   const [additional, setAdditional] = useState("");
+  const [isCreating, setIsCreating] = useState(false);
   const store = useStore(selector, shallow);
+
+    const handleSubmit = async () => {
+      const promptsArr:any = []
+      var inputType = "text"
+      store.nodes.forEach((node) => {
+        if (node.type === "prompt") {
+          promptsArr.push(node.data?.text!)
+        }
+        if (node.type === "input") {
+          inputType = node.data?.type
+        }
+      })
+      // console.log(promptsArr, inputType)
+
+      const checkEmpty = (arr) => {
+        for (let i = 0; i < arr.length; i++) {
+          if (arr[i] === "") {
+            return true;
+          }
+        }
+        return false;
+      }
+
+      if (!name || !description || checkEmpty(promptsArr)) {
+        toast({
+          title: "Error",
+          description: "Please fill out all Prompt fields.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+        return;
+      }
+
+      setIsCreating(true);
+
+      const result = await addSimpleTool({
+        additional,
+        creatorName: user?.displayName || "",
+        description,
+        img: "https://example.com/image.jpg",
+        prompts: promptsArr,
+        stars: 5,
+        status: true,
+        toolName: name,
+        type: inputType,
+        userId: user?.uid || "",
+      });
+
+      setIsCreating(false);
+
+      if (result.success) {
+        toast({
+          title: "Success",
+          description: "Tool created successfully.",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+        // console.log("Document added with ID: ", result.id);
+
+        setName("");
+        setDescription("");
+        setAdditional("");
+        store.makeEmpty();
+      } else {
+        toast({
+          title: "Error",
+          description: "Failed to create the tool.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+        // console.error("Failed to add document: ", result.error);
+      }
+    };
+
+    const isFormValid = name && description;
+
+
+
   return (
     <Box position="relative" overflow="hidden" p={{ base: 4, md: 8 }}>
       <BackgroundGradient height={400} zIndex="-1" />
@@ -106,7 +189,7 @@ const CreateTool: NextPage = () => {
             borderRight={{ base: "none", md: "0px solid #E2E8F0" }}
             mx={{ base: "auto", md: "0" }}
           >
-            <FormControl mb={4}>
+            {/* <FormControl mb={4}>
               <FormLabel pb={0} fontSize={15} mt={3}>
                 Type
               </FormLabel>
@@ -117,7 +200,7 @@ const CreateTool: NextPage = () => {
                   <Radio value="both">Both</Radio>
                 </Stack>
               </RadioGroup>
-            </FormControl>
+            </FormControl> */}
 
             <FormControl isRequired>
               <Box display="flex" alignItems="center">
@@ -194,10 +277,11 @@ const CreateTool: NextPage = () => {
               height="45px"
               width="145px"
               fontSize="18px"
-              onClick={() => (window.location.href = "/")}
+              onClick={handleSubmit}
               mt={4}
+              isDisabled={!isFormValid || isCreating}
             >
-              Submit
+              {isCreating ? <Spinner size="sm" /> : "Create"}
             </Button>
           </Box>
           <Divider
@@ -226,7 +310,17 @@ const CreateTool: NextPage = () => {
             >
               <Panel className={"space-x-4"} position="top-right">
                 <button
-                  className={"px-2 py-1 rounded bg-white shadow text-black font-normal"}
+                  className={
+                    "px-2 py-1 rounded bg-white shadow text-black font-normal"
+                  }
+                  onClick={() => window.location.reload()}
+                >
+                  Reload
+                </button>
+                <button
+                  className={
+                    "px-2 py-1 rounded bg-white shadow text-black font-normal"
+                  }
                   onClick={store.addPrompt}
                 >
                   Add Prompt
@@ -242,7 +336,4 @@ const CreateTool: NextPage = () => {
   );
 };
 
-export default CreateTool;
-
-
-
+export default isAuth(CreateTool);

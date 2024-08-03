@@ -12,20 +12,10 @@ export default function Out({ id, data }) {
   const { isRunning, toggleAudio } = useStore(selector, shallow);
 
   return (
-    <div className={"rounded-md bg-white shadow-xl px-4 py-2"}>
+    <div className={"rounded-md bg-white shadow-xl px-1 py-1"}>
       <Handle className={"w-2 h-2"} type="target" position="top" />
-
-      <button onClick={toggleAudio}>
-        {isRunning ? (
-          <span role="img" aria-label="mute">
-            🔈
-          </span>
-        ) : (
-          <span role="img" aria-label="unmute">
-            🔇
-          </span>
-        )}
-      </button>
+      <p className="rounded-md px-2 py-2 bg-purple-500 text-sm">Gemini Output</p>
+      <Handle className={"w-2 h-2"} type="source" position="bottom" />
     </div>
   );
 }

@@ -264,30 +264,38 @@ const HighlightsSection = ({ highlightsData, togglePublicPrivate }) => {
               cursor="pointer"
               onClick={() => router.push(`/edit-tool?toolID=${highlight.id}`)}
             />
-            <Box position="relative">
-              <Text color="muted" fontSize="lg">
-                {highlight.description}
-              </Text>
-              <Flex justifyContent="space-between" alignItems="center" mt={3}>
-                <ButtonGroup spacing={3} alignItems="center">
-                  <ButtonLink
-                    marginTop={2}
-                    colorScheme="primary"
-                    fontSize="1.2rem"
-                    width={110}
-                    height={45}
-                    href={`/tool?toolID=${highlight.id}`}
-                  >
-                    Use
-                    <FontAwesomeIcon
-                      style={{ marginLeft: "0.5rem" }}
-                      icon={faArrowUpRightFromSquare}
-                    />
-                  </ButtonLink>
-                </ButtonGroup>
-              </Flex>
-              <Flex justifyContent="space-between" alignItems="center" mt={10}>
-                <Flex alignItems="center">
+            <Flex direction="column" height="100%">
+              <Box flex="1">
+                <Text color="muted" fontSize="lg">
+                  {highlight.description}
+                </Text>
+                <Flex justifyContent="space-between" alignItems="center" mt={3}>
+                  <ButtonGroup spacing={3} alignItems="center">
+                    <ButtonLink
+                      marginTop={2}
+                      colorScheme="primary"
+                      fontSize="1.2rem"
+                      width={110}
+                      height={45}
+                      href={`/tool?toolID=${highlight.id}`}
+                    >
+                      Use
+                      <FontAwesomeIcon
+                        style={{ marginLeft: "0.5rem" }}
+                        icon={faArrowUpRightFromSquare}
+                      />
+                    </ButtonLink>
+                  </ButtonGroup>
+                </Flex>
+              </Box>
+              <Flex
+                justifyContent="space-between"
+                alignItems="center"
+                mt={8}
+                py={2}
+                borderTop="1px solid #03C988"
+              >
+                <Flex mt={3} alignItems="center">
                   <Flex alignItems="center" mr="1.2rem">
                     <Icon
                       as={likes[highlight.id] ? BsHeartFill : BsHeart}
@@ -297,9 +305,7 @@ const HighlightsSection = ({ highlightsData, togglePublicPrivate }) => {
                       color={likes[highlight.id] ? "red" : ""}
                       onClick={() => handleLike(highlight.id)}
                     />
-                    <Text fontSize="sm">
-                      {likes[highlight.id] || 0}
-                    </Text>
+                    <Text fontSize="sm">{likes[highlight.id] || 0}</Text>
                   </Flex>
                   <Icon
                     as={SlActionRedo}
@@ -313,11 +319,10 @@ const HighlightsSection = ({ highlightsData, togglePublicPrivate }) => {
                     boxSize="1.2rem"
                     cursor="pointer"
                     marginRight="1.2rem"
-                    color={saved[highlight.id] ? "" : ""}
                     onClick={() => handleSave(highlight.id)}
                   />
                 </Flex>
-                <Flex alignItems="center">
+                <Flex mt={3} alignItems="center">
                   <Text paddingLeft={8}>
                     {highlight.status ? "Public" : "Private"}
                   </Text>
@@ -331,7 +336,7 @@ const HighlightsSection = ({ highlightsData, togglePublicPrivate }) => {
                   />
                 </Flex>
               </Flex>
-            </Box>
+            </Flex>
           </HighlightsItem>
         ))}
       </Highlights>

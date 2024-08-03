@@ -8,23 +8,28 @@ import {
   query,
   where,
   getDocs,
-  getDoc
+  getDoc,
+  increment,
+  orderBy,  
 } from "firebase/firestore";
 import { useCollection, useDocument } from "react-firebase-hooks/firestore";
 
 const db = getFirestore(app);
 
-export const GetAllData = async () => {
-  const q = query(collection(db, "data"));
-  const querySnapshot = await getDocs(q);
-  let arr = [];
-  querySnapshot.forEach((doc) => {
-    arr.push({ ...doc.data(), id: doc.id });
-  });
-  return arr;
+export const GetAllData = async (filter = "stars") => {
+  try {
+    const q = query(collection(db, "data"), orderBy(filter, "desc"));
+    const querySnapshot = await getDocs(q);
+    let arr = [];
+    querySnapshot.forEach((doc) => {
+      arr.push({ ...doc.data(), id: doc.id });
+    });
+    return arr;
+  } catch (error) {
+    console.error("Error fetching data: ", error);
+    throw error;
+  }
 };
-
-
 
 export const getDocumentUsingToolID = async (toolID) => {
   try {
@@ -66,24 +71,24 @@ export const updateDocumentStatus = async (id, status) => {
     await updateDoc(docRef, { status });
     return { success: true };
   } catch (error) {
-    console.error('Error updating document status:', error);
+    console.error("Error updating document status:", error);
     return { success: false, error };
   }
 };
 
 export const saveTool = async (userId, toolId) => {
   try {
-    const userDocRef = doc(db, "users", userId);
-    await updateDoc(userDocRef, {
-      savedTools: arrayUnion(toolId),
-    });
-    return { success: true };
+    // needs implementation
+    // const userDocRef = doc(db, "users", userId);
+    // await updateDoc(userDocRef, {
+    //   savedTools: arrayUnion(toolId),
+    // });
+    // return { success: true };
   } catch (error) {
-    console.error('Error saving tool:', error);
+    console.error("Error saving tool:", error);
     return { success: false, error };
   }
 };
-
 
 export const addSimpleTool = async ({
   additional,
@@ -95,10 +100,10 @@ export const addSimpleTool = async ({
   status,
   toolName,
   type,
-  userId
+  userId,
 }) => {
   try {
-    const docRef = await addDoc(collection(db, 'data'), {
+    const docRef = await addDoc(collection(db, "data"), {
       additional,
       creatorName,
       description,
@@ -109,21 +114,45 @@ export const addSimpleTool = async ({
       toolName,
       type,
       userId,
-      createdAt: new Date() 
+      createdAt: new Date(),
     });
 
     return {
       success: true,
       id: docRef.id,
-      error: null
+      error: null,
     };
   } catch (error) {
     console.error("Error adding document: ", error);
     return {
       success: false,
       id: null,
-      error: error.message
+      error: error.message,
     };
   }
 };
 
+export const updateStars = async (toolId, incrementBy = 1) => {
+  try {
+    // Reference to the tool document
+    const toolRef = doc(db, "data", toolId);
+
+    // Update the star count
+    await updateDoc(toolRef, {
+      stars: increment(incrementBy),
+    });
+
+    return {
+      success: true,
+      message: `Stars ${
+        incrementBy > 0 ? "increased" : "decreased"
+      } successfully.`,
+    };
+  } catch (error) {
+    console.error("Error updating stars: ", error);
+    return {
+      success: false,
+      message: error.message,
+    };
+  }
+};
