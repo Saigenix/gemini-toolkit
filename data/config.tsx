@@ -8,7 +8,7 @@ import { Logo } from './logo'
 const siteConfig = {
   logo: Logo,
   seo: {
-    title: 'NexAI',
+    title: 'Gemini Toolkit',
     description: 'The Next Level AI',
   } as NextSeoProps,
   termsUrl: '#',
