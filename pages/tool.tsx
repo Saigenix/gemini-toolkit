@@ -22,15 +22,23 @@ import {
   IconButton,
   Textarea,
   Input,
+  Tooltip,
+  Flex,
   Spinner,
   Collapse,
   FormLabel,
 } from "@chakra-ui/react";
 import { SEO } from "components/seo/seo";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCloudUploadAlt, faCopy } from "@fortawesome/free-solid-svg-icons";
 import { useToast } from "@chakra-ui/react";
 import ReactMarkdown from "react-markdown";
+import { MdVerified } from "react-icons/md";
+import {
+  faCircleQuestion,
+  faCircleInfo,
+  faQuestion,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const ToolPage: NextPage = ({}: any) => {
   // const [user, loading, error] = useAuthState(auth);
@@ -190,19 +198,26 @@ const ToolPage: NextPage = ({}: any) => {
       <Box display={{ base: "block", md: "flex" }} p={4}>
         <Box
           flex={{ base: "none", md: "1" }}
-          textAlign={{ base: "center", md: "left" }}
+          textAlign="left"
           borderRight="1px solid gray"
-          pr={{ md: 4 }}
+          pr={4}
         >
           <Heading
             fontSize={{ base: "20px", md: "24px" }}
             as="h2"
             size="lg"
             mt={5}
+            textAlign="left"
           >
             {document.toolName}
           </Heading>
-          <Text mt={3} fontSize={{ base: "16px", md: "18px" }}>
+          <Flex justifyContent="flex-start" alignItems="center" mt={3}>
+            <Text fontSize={{ base: "12px", md: "16px" }} mr={2} opacity={0.8}>
+              {document.creatorName}
+            </Text>
+            <MdVerified color="#06D001" size={20} style={{ marginTop: 0 }} />
+          </Flex>
+          <Text mt={3} fontSize={{ base: "16px", md: "18px" }} textAlign="left">
             {document.description}
           </Text>
         </Box>
@@ -215,9 +230,21 @@ const ToolPage: NextPage = ({}: any) => {
           <Box mb={4}>
             {document.type === "text" && (
               <Box mb={4}>
-                <Text fontSize={18} fontWeight={600} pb={3}>
-                  Enter Text
-                </Text>
+                <Flex>
+                  <Text fontSize={18} fontWeight={600} pb={3}>
+                    Enter Text
+                  </Text>
+                  <Tooltip
+                    label={document.additional}
+                    placement="right"
+                    hasArrow
+                  >
+                    <FontAwesomeIcon
+                      style={{ marginTop: 5, height: 15, marginLeft: 10 }}
+                      icon={faCircleQuestion}
+                    />
+                  </Tooltip>
+                </Flex>
                 <Textarea
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
@@ -433,3 +460,5 @@ const ToolPage: NextPage = ({}: any) => {
 };
 
 export default ToolPage;
+
+
