@@ -69,6 +69,8 @@ const CreateTool: NextPage = () => {
   const [prompt, setPrompt] = useState([]);
   const [additional, setAdditional] = useState("");
   const store = useStore(selector, shallow);
+  
+
   return (
     <Box position="relative" overflow="hidden" p={{ base: 4, md: 8 }}>
       <BackgroundGradient height={400} zIndex="-1" />

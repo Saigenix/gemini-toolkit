@@ -61,8 +61,7 @@ const Home: NextPage = () => {
   }, []);
 
   const handleClick = () => {
-    router.push("/profile");
-    console.log("Clicked");
+    router.push("/create-tool");
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -133,13 +132,12 @@ const Home: NextPage = () => {
             _hover={{
               bgGradient: "linear(to-r, blue.600, purple.600)",
             }}
-            borderRadius="full"
-            // onClick={() => (window.location.href = "/profile")}
+            // borderRadius="full"
             onClick={handleClick}
             size="lg"
-            sx={{
-              animation: `${glowing} 2s infinite`,
-            }}
+            // sx={{
+            //   animation: `${glowing} 2s infinite`,
+            // }}
           >
             Create Tool
           </Button>
@@ -250,7 +248,7 @@ const HighlightsSection = ({ tools }: any) => {
 `;
 
   return (
-    <Highlights marginTop={-14}>
+    <Highlights paddingTop={10}>
       {tools.map((highlight, index) => (
         <HighlightsItem
           key={index}
