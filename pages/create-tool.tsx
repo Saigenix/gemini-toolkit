@@ -46,7 +46,6 @@ import InputF from "components/nodes/input";
 import Prompt from "components/nodes/prompt";
 import Out from "components/nodes/output";
 
-
 const selector = (store) => ({
   nodes: store.nodes,
   edges: store.edges,
@@ -57,6 +56,7 @@ const selector = (store) => ({
   addEdge: store.addEdge,
   addPrompt: () => store.createNode("prompt"),
   addInput: () => store.createNode("input"),
+
 });
 
 const nodeTypes = { input: InputF, prompt: Prompt, out: Out };
@@ -106,7 +106,7 @@ const CreateTool: NextPage = () => {
             borderRight={{ base: "none", md: "0px solid #E2E8F0" }}
             mx={{ base: "auto", md: "0" }}
           >
-            <FormControl mb={4}>
+            {/* <FormControl mb={4}>
               <FormLabel pb={0} fontSize={15} mt={3}>
                 Type
               </FormLabel>
@@ -117,7 +117,7 @@ const CreateTool: NextPage = () => {
                   <Radio value="both">Both</Radio>
                 </Stack>
               </RadioGroup>
-            </FormControl>
+            </FormControl> */}
 
             <FormControl isRequired>
               <Box display="flex" alignItems="center">
@@ -226,7 +226,17 @@ const CreateTool: NextPage = () => {
             >
               <Panel className={"space-x-4"} position="top-right">
                 <button
-                  className={"px-2 py-1 rounded bg-white shadow text-black font-normal"}
+                  className={
+                    "px-2 py-1 rounded bg-white shadow text-black font-normal"
+                  }
+                  onClick={()=>window.location.reload()}
+                >
+                  Reload
+                </button>
+                <button
+                  className={
+                    "px-2 py-1 rounded bg-white shadow text-black font-normal"
+                  }
                   onClick={store.addPrompt}
                 >
                   Add Prompt
@@ -243,6 +253,3 @@ const CreateTool: NextPage = () => {
 };
 
 export default CreateTool;
-
-
-
