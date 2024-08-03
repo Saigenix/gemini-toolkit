@@ -7,6 +7,7 @@ import { SlActionRedo, SlHeart } from "react-icons/sl";
 import { BsBookmarkPlus, BsHeartFill, BsHeart } from "react-icons/bs";
 import { css, keyframes } from "@emotion/react";
 import geminiLogo from "../public/static/images/gemini.png";
+import { useRouter } from "next/router";
 import {
   Container,
   Box,
@@ -47,6 +48,7 @@ const Home: NextPage = () => {
   const [filteredTools, setFilteredTools] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [searchTerm, setSearchTerm] = React.useState("");
+  const router = useRouter();
 
   React.useEffect(() => {
     GetAllData().then((data) => {
@@ -57,6 +59,11 @@ const Home: NextPage = () => {
     });
     // requestPermission();
   }, []);
+
+  const handleClick = () => {
+    router.push("/profile");
+    console.log("Clicked");
+  };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const term = e.target.value.toLowerCase();
@@ -121,13 +128,14 @@ const Home: NextPage = () => {
           <Button
             mt={10}
             color="white"
+            cursor="pointer"
             bgGradient="linear(to-r, blue.500, purple.500)"
             _hover={{
               bgGradient: "linear(to-r, blue.600, purple.600)",
             }}
             borderRadius="full"
-            cursor={"pointer"}
-            onClick={() => (window.location.href = "/profile")}
+            // onClick={() => (window.location.href = "/profile")}
+            onClick={handleClick}
             size="lg"
             sx={{
               animation: `${glowing} 2s infinite`,
@@ -392,5 +400,3 @@ const HighlightsSection = ({ tools }: any) => {
 };
 
 export default Home;
-
-
