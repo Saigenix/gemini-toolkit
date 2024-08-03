@@ -7,7 +7,6 @@ import { SlActionRedo, SlHeart } from "react-icons/sl";
 import { BsBookmarkPlus, BsHeartFill, BsHeart } from "react-icons/bs";
 import { css, keyframes } from "@emotion/react";
 import geminiLogo from "../public/static/images/gemini.png";
-
 import {
   Container,
   Box,
@@ -41,6 +40,7 @@ import { ButtonLink } from "components/button-link/button-link";
 import { Highlights, HighlightsItem } from "components/highlights";
 import { GetAllData, saveTool } from "utils/firestore";
 import { requestPermission } from "utils/firebase-messaging";
+import { MdVerified } from "react-icons/md";
 
 const Home: NextPage = () => {
   const [tools, setTools] = React.useState<any[]>([]);
@@ -77,15 +77,15 @@ const Home: NextPage = () => {
   const glowing = keyframes`
   0% {
     border-color: #805AD5;
-    box-shadow: 0 0 5px #805AD5;
+    box-shadow: 0 0 2px #805AD5;
   }
   50% {
     border-color: #B794F4;
-    box-shadow: 0 0 20px #B794F4;
+    box-shadow: 0 0 10px #B794F4;
   }
   100% {
     border-color: #805AD5;
-    box-shadow: 0 0 5px #805AD5;
+    box-shadow: 0 0 2px #805AD5;
   }
 `;
 
@@ -94,12 +94,12 @@ const Home: NextPage = () => {
       <SEO title="Gemini ToolKit" description="Next Generation AI" />
       <Box>
         <ExploreTools />
-        <Container maxW="container.xl" textAlign="center" pb={3}>
+        <Container maxW="container.xl" textAlign="center" pb={-3}>
           <InputGroup
             size="md"
             maxW="lg"
             mx="auto"
-            mt={5}
+            mt={0}
             borderRadius="full"
             borderColor="purple.500"
             boxShadow="md"
@@ -110,7 +110,7 @@ const Home: NextPage = () => {
             <Input
               pr="4.5rem"
               padding={5}
-              placeholder="Search For Tools "
+              placeholder="Search Tools"
               value={searchTerm}
               onChange={handleSearch}
               borderRadius="full"
@@ -118,6 +118,23 @@ const Home: NextPage = () => {
             />
             <InputRightElement width="4.5rem" />
           </InputGroup>
+          <Button
+            mt={10}
+            color="white"
+            bgGradient="linear(to-r, blue.500, purple.500)"
+            _hover={{
+              bgGradient: "linear(to-r, blue.600, purple.600)",
+            }}
+            borderRadius="full"
+            cursor={"pointer"}
+            onClick={() => (window.location.href = "/profile")}
+            size="lg"
+            sx={{
+              animation: `${glowing} 2s infinite`,
+            }}
+          >
+            Create Tool
+          </Button>
         </Container>
         {loading ? (
           <Center height="100%" pt="20">
@@ -225,21 +242,34 @@ const HighlightsSection = ({ tools }: any) => {
 `;
 
   return (
-    <Highlights>
+    <Highlights marginTop={-14}>
       {tools.map((highlight, index) => (
         <HighlightsItem
           key={index}
           title={highlight.toolName}
           position="relative"
+          display="flex"
+          flexDirection="column"
+          justifyContent="space-between"
+          minHeight="250px"
         >
-          <Text color="muted" fontSize="lg">
-            {highlight.description}
-          </Text>
+          <Box>
+            <Box display="flex" alignItems="center" mt={-6}>
+              <Text fontWeight={400} fontSize="lg" mr={2}>
+                {highlight.creatorName}
+              </Text>
+              <MdVerified color="#06D001" size={20} />
+            </Box>
+            <Text mt={5} color="muted" fontSize="lg">
+              {highlight.description}
+            </Text>
+          </Box>
+
           <Box
             as="img"
             src={geminiLogo.src}
             alt="Gemini Logo"
-            boxSize="1.5rem"
+            boxSize="1.6rem"
             position="absolute"
             top={0}
             right={0}
@@ -249,6 +279,7 @@ const HighlightsSection = ({ tools }: any) => {
               filter: saturate(2);
             `}
           />
+
           <Flex justifyContent="space-between" alignItems="center" mt={3}>
             <ButtonGroup spacing={3} alignItems="center">
               <ButtonLink
@@ -267,7 +298,7 @@ const HighlightsSection = ({ tools }: any) => {
               </ButtonLink>
             </ButtonGroup>
           </Flex>
-          <Flex alignItems="center" mt={10}>
+          <Flex justifyContent="space-between" alignItems="center" mt={10}>
             <Flex alignItems="center" mr="1.2rem">
               <Icon
                 as={likes[highlight.id] ? BsHeartFill : BsHeart}
@@ -361,4 +392,5 @@ const HighlightsSection = ({ tools }: any) => {
 };
 
 export default Home;
+
 

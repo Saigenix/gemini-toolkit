@@ -19,6 +19,7 @@ import {
   Heading,
   Text,
   Center,
+  IconButton,
   Textarea,
   Input,
   Spinner,
@@ -27,7 +28,7 @@ import {
 } from "@chakra-ui/react";
 import { SEO } from "components/seo/seo";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCloudUploadAlt } from "@fortawesome/free-solid-svg-icons";
+import { faCloudUploadAlt, faCopy } from "@fortawesome/free-solid-svg-icons";
 import { useToast } from "@chakra-ui/react";
 import ReactMarkdown from "react-markdown";
 
@@ -155,6 +156,16 @@ const ToolPage: NextPage = ({}: any) => {
       const newShowResponses = [...prev];
       newShowResponses[index] = !newShowResponses[index];
       return newShowResponses;
+    });
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      toast({
+        title: "Copied successfully!",
+        status: "success",
+        isClosable: true,
+      });
     });
   };
 
@@ -312,34 +323,53 @@ const ToolPage: NextPage = ({}: any) => {
                   border="1px solid gray"
                   borderRadius="md"
                 >
-                  <Heading fontSize="lg" mb={2}>
-                    {index + 1 == geminiOutput.length ? "Final " : ""}
-                    Response {index + 1}
-                    <Button
-                      size="xs"
-                      ml={4}
-                      onClick={() => toggleResponse(index)}
-                    >
-                      {showResponses[index] ? "Hide" : "Show"}
-                    </Button>
+                  <Heading
+                    fontSize="lg"
+                    mb={2}
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="space-between"
+                  >
+                    <Box>
+                      {index + 1 == geminiOutput.length ? "Final " : ""}
+                      Response {index + 1}
+                      <Button
+                        marginLeft={3}
+                        size="xs"
+                        fontSize={15}
+                        onClick={() => toggleResponse(index)}
+                      >
+                        {showResponses[index] ? "Hide" : "Show"}
+                      </Button>
+                    </Box>
+
+                    <Box display="flex" alignItems="center">
+                      <Box ml={4} display="flex" alignItems="center">
+                        <Text
+                          fontWeight={800}
+                          fontSize={15}
+                          display={{ base: "none", md: "inline" }}
+                          mr={2}
+                        >
+                          Copy
+                        </Text>
+                        <IconButton
+                          aria-label="Copy response"
+                          icon={<FontAwesomeIcon icon={faCopy} />}
+                          onClick={() => copyToClipboard(response)}
+                          size="sm"
+                        />
+                      </Box>
+                    </Box>
                   </Heading>
 
-                  {/* <Collapse in={showResponses[index]}>
-                    <Textarea
-                      value={response}
-                      isReadOnly
-                      size="xl"
-                      height={300}
-                      padding={5}
-                      background="transparent"
-                    />
-                  </Collapse> */}
                   <Collapse in={showResponses[index]}>
                     <Box
                       height={300}
                       padding={8}
                       background="linear-gradient(135deg, rgba(128, 0, 128, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%)"
                       overflowY="auto"
+                      borderRadius={10}
                       sx={{
                         p: {
                           marginBottom: "1rem",
@@ -403,5 +433,3 @@ const ToolPage: NextPage = ({}: any) => {
 };
 
 export default ToolPage;
-
-
