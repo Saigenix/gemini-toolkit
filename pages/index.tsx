@@ -42,8 +42,11 @@ import { Highlights, HighlightsItem } from "components/highlights";
 import { GetAllData, saveTool } from "utils/firestore";
 import { requestPermission } from "utils/firebase-messaging";
 import { MdVerified } from "react-icons/md";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../utils/Auth";
 
 const Home: NextPage = () => {
+  const [user, loginLoading, error] = useAuthState(auth);
   const [tools, setTools] = React.useState<any[]>([]);
   const [filteredTools, setFilteredTools] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -61,7 +64,8 @@ const Home: NextPage = () => {
   }, []);
 
   const handleClick = () => {
-    router.push("/create-tool");
+    if (user) router.push("/create-tool");
+    else router.push("/signup");
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {

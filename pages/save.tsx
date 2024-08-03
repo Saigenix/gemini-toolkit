@@ -32,6 +32,7 @@ import { BackgroundGradient } from "components/gradients/background-gradient";
 import { SlActionRedo } from "react-icons/sl";
 import { ButtonLink } from "components/button-link/button-link";
 import { Highlights, HighlightsItem } from "components/highlights";
+import isAuth from "hooks/isAuth";
 
 const SavedTools: React.FC = () => {
     const [savedTools, setSavedTools] = React.useState<any[]>([]);
@@ -181,6 +182,6 @@ const HighlightsSection = ({ tools }: { tools: any[] }) => {
     );
 };
 
-export default SavedTools;
+export default isAuth(SavedTools);
 
 

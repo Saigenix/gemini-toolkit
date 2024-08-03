@@ -2,7 +2,6 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleQuestion } from "@fortawesome/free-solid-svg-icons";
-import { useAuthState } from "react-firebase-hooks/auth";
 import {
   Box,
   Button,
@@ -21,28 +20,18 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import { BackgroundGradient } from "components/gradients/background-gradient";
-import { auth } from "../utils/Auth";
 import { SEO } from "components/seo/seo";
 import { addSimpleTool } from "utils/firestore";
-import { useRouter } from "next/router";
-
-const CreateSimple: React.FC = () => {
+import isAuth from "hooks/isAuth";
+const CreateSimple: React.FC = ({user}:any) => {
   const toast = useToast();
   const [type, setType] = useState("text");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [prompt, setPrompt] = useState("");
-  const [extraPrompt, setExtraPrompt] = useState("");
   const [additional, setAdditional] = useState("");
   const [isCreating, setIsCreating] = useState(false);
-  const router = useRouter();
-  const [user, loading, error] = useAuthState(auth);
 
-  useEffect(() => {
-    if (!user && !loading) {
-      router.push("/");
-    }
-  }, [user, loading]);
 
   const handleSubmit = async () => {
     if (!name || !description || !prompt) {
@@ -230,5 +219,4 @@ const CreateSimple: React.FC = () => {
   );
 };
 
-export default CreateSimple;
-
+export default isAuth(CreateSimple);

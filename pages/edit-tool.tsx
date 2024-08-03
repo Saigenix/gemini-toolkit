@@ -20,7 +20,7 @@ import {
 } from "@chakra-ui/react";
 import { BackgroundGradient } from "components/gradients/background-gradient";
 import { SEO } from "components/seo/seo";
-
+import isAuth from "hooks/isAuth";
 const EditTool: React.FC = () => {
     const toast = useToast();
     const [type, setType] = useState("text");
@@ -162,7 +162,7 @@ const EditTool: React.FC = () => {
     );
 };
 
-export default EditTool;
+export default isAuth(EditTool);
 
 
 

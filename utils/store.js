@@ -39,6 +39,15 @@ export const useStore = create((set, get) => ({
   //     });
   //   },
 
+  makeEmpty() {
+    get().nodes.forEach((node) => {
+      if (node.type === "prompt") {
+        get().updateNode(node.id, { text: "" });
+      }
+    });
+    // console.log(get().nodes);
+  },
+
   reload() {
     set({ nodes: get().nodes, edges: get().edges });
   },
@@ -65,7 +74,6 @@ export const useStore = create((set, get) => ({
         };
         // source.connect(target);
         set({ edges: [preEdge, ...get().edges] });
-
 
         set({ nodes: [...get().nodes, { id, type, data, position }] });
 
@@ -133,7 +141,7 @@ export const useStore = create((set, get) => ({
 
   onEdgesDelete(deleted) {
     for (const { source, target } of deleted) {
-      disconnect(source, target);
+      // disconnect(source, target);
     }
   },
 }));
