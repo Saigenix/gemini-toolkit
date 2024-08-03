@@ -87,7 +87,7 @@ const Home: NextPage = () => {
   const glowing = keyframes`
   0% {
     border-color: #805AD5;
-    box-shadow: 0 0 2px #805AD5;
+    box-shadow: 0 0 1px #805AD5;
   }
   50% {
     border-color: #B794F4;
@@ -95,7 +95,7 @@ const Home: NextPage = () => {
   }
   100% {
     border-color: #805AD5;
-    box-shadow: 0 0 2px #805AD5;
+    box-shadow: 0 0 1px #805AD5;
   }
 `;
 
@@ -136,7 +136,7 @@ const Home: NextPage = () => {
             _hover={{
               bgGradient: "linear(to-r, blue.600, purple.600)",
             }}
-            // borderRadius="full"
+            borderRadius="full"
             onClick={handleClick}
             size="lg"
             // sx={{

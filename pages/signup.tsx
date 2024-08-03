@@ -50,14 +50,14 @@ const SignUp: NextPage = () => {
           flexDirection={{ base: "column", lg: "row" }}
         >
           <Box pe="20">
-            <NextLink href="/">
+            {/* <NextLink href="/">
               <Box
                 as={siteConfig.logo}
                 width="160px"
                 ms="4"
                 mb={{ base: 0, lg: 16 }}
               />
-            </NextLink>
+            </NextLink> */}
             <Features
               display={{ base: "none", lg: "flex" }}
               columns={1}
@@ -74,9 +74,20 @@ const SignUp: NextPage = () => {
             />
           </Box>
           <Center height="100%" flex="1" mt={{ base: 0, lg: 20 }}>
-            <Box width="container.sm" pt="8" px="8" textAlign="center">
-              <Text fontWeight="bold" fontSize="2xl" mb={6} mt={{ base: 4, lg: 0 }}>
-                Sign Up to gemini toolkit
+            <Box
+              width="100%"
+              maxW="container.sm"
+              pt="8"
+              px={{ base: 4, lg: 8 }}
+              textAlign="center"
+            >
+              <Text
+                fontWeight="bold"
+                fontSize="2xl"
+                mb={6}
+                mt={{ base: 4, lg: 0 }}
+              >
+                Sign Up to Gemini Toolkit
               </Text>
               <Button
                 size="lg"
@@ -88,6 +99,7 @@ const SignUp: NextPage = () => {
                 leftIcon={<FaGoogle />}
                 isLoading={isLoading}
                 onClick={() => LoginWithGoogle()}
+                width={{ base: "100%", md: "auto" }}
               >
                 Sign Up with Google
               </Button>

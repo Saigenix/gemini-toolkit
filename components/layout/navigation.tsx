@@ -8,9 +8,13 @@ import {
   MenuItem,
   Button,
   Avatar,
+  IconButton,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import siteConfig from "data/config";
+import { BellIcon } from "@chakra-ui/icons";
+import { FaBell } from "react-icons/fa";
 import { NavLink } from "components/nav-link";
 import { useScrollSpy } from "hooks/use-scrollspy";
 import { MobileNavButton } from "components/mobile-nav";
@@ -43,6 +47,8 @@ const Navigation: React.FC = () => {
     SignOut();
   };
 
+  const showNotificationBell = useBreakpointValue({ base: false, md: true });
+
   return (
     <HStack spacing="2" flexShrink={0}>
       {siteConfig.header.links.map(({ href, id, ...props }, i) => {
@@ -68,6 +74,17 @@ const Navigation: React.FC = () => {
         }
       })}
 
+      {showNotificationBell && (
+        <IconButton
+          aria-label="Notifications"
+          icon={<BellIcon />}
+          variant="ghost"
+          marginRight={-2}
+          fontSize="1.2rem"
+        />
+      )}
+
+
       <ThemeToggle />
       {user && (
         <Menu>
@@ -88,7 +105,9 @@ const Navigation: React.FC = () => {
           </MenuButton>
           <MenuList>
             <MenuItem onClick={() => router.push("/profile")}>Profile</MenuItem>
-            <MenuItem onClick={() => router.push("/save")}>Saved Tools</MenuItem>
+            <MenuItem onClick={() => router.push("/save")}>
+              Saved Tools
+            </MenuItem>
             <MenuItem onClick={handleSignOut}>Sign Out</MenuItem>
           </MenuList>
         </Menu>
