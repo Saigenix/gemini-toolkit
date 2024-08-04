@@ -151,11 +151,10 @@ const CreateTool: NextPage = ({ user }: any) => {
     const isFormValid = name && description;
 
 
-
   return (
     <Box position="relative" overflow="hidden" p={{ base: 4, md: 8 }}>
       <BackgroundGradient height={400} zIndex="-1" />
-      <Container maxW="container.xl" mt={10} p={4}>
+      <Container maxW="container.xl" mt={12} p={4}>
         <Flex justifyContent="space-between" mb={4} alignItems="center">
           <Heading size="md">Tool Details</Heading>
           <Flex alignItems="center">
@@ -337,3 +336,6 @@ const CreateTool: NextPage = ({ user }: any) => {
 };
 
 export default isAuth(CreateTool);
+
+
+

@@ -13,7 +13,7 @@ export default function Prompt({ id, data }) {
   return (
     <div className="rounded-md bg-white shadow-xl p-1">
       <Handle className="w-2 h-2" type="target" position="top" />
-      <p className="rounded-t-md px-2 py-2 bg-pink-500 text-sm">Prompt</p>
+      <p className="rounded-t-md px-2 py-2 bg-green-500 text-sm">Prompt</p>
       <textarea
         className="bg-white border text-black border-black m-1 w-80 p-1 font-light text-sm"
         type="textarea"
@@ -26,3 +26,5 @@ export default function Prompt({ id, data }) {
     </div>
   );
 }
+
+

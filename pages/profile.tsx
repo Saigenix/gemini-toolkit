@@ -93,6 +93,7 @@ const Profile: NextPage = () => {
   };
 
   return (
+    
     <Box>
       <SEO title="NexAI" description="Next Generation AI" />
       <Box display={{ base: "block", md: "flex" }}>
@@ -228,6 +229,7 @@ const HighlightsSection = ({ highlightsData, togglePublicPrivate }) => {
   };
 
   return (
+    <Flex direction="column" minHeight="100vh">
     <Box>
       <Heading
         fontWeight={500}
@@ -341,6 +343,7 @@ const HighlightsSection = ({ highlightsData, togglePublicPrivate }) => {
         ))}
       </Highlights>
     </Box>
+    </Flex>
   );
 };
 

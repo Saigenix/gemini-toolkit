@@ -24,6 +24,7 @@ import { SignOut } from "utils/Auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "utils/Auth";
 import ThemeToggle from "./theme-toggle";
+import { FiMoreVertical } from "react-icons/fi";
 
 const Navigation: React.FC = () => {
   const mobileNav = useDisclosure();
@@ -84,7 +85,6 @@ const Navigation: React.FC = () => {
         />
       )}
 
-
       <ThemeToggle />
       {user && (
         <Menu>
@@ -92,7 +92,15 @@ const Navigation: React.FC = () => {
             as={Button}
             variant="link"
             rightIcon={
-              <Avatar size="sm" name="User Name" src={user.photoURL!} />
+              <>
+                <Avatar size="sm" name="User Name" src={user.photoURL!} />
+                <IconButton
+                  aria-label="Options"
+                  icon={<FiMoreVertical />}
+                  variant="link"
+                  fontSize="1.2rem"
+                />
+              </>
             }
             sx={{
               textDecoration: "none",
