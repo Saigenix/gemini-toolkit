@@ -27,10 +27,10 @@ import {
   Spinner,
   Collapse,
   FormLabel,
+  useToast,
 } from "@chakra-ui/react";
 import { SEO } from "components/seo/seo";
 import { faCloudUploadAlt, faCopy } from "@fortawesome/free-solid-svg-icons";
-import { useToast } from "@chakra-ui/react";
 import ReactMarkdown from "react-markdown";
 import { MdVerified } from "react-icons/md";
 import {
@@ -39,6 +39,7 @@ import {
   faQuestion,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { uploadImageToFirebase } from "utils/firestore";
 
 const ToolPage: NextPage = ({}: any) => {
   // const [user, loading, error] = useAuthState(auth);
@@ -49,7 +50,7 @@ const ToolPage: NextPage = ({}: any) => {
   const [contentLoading, setContentLoading] = useState(false);
   const searchParams = useSearchParams();
   const [inputText, setInputText] = useState("");
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imgUrl, setimgUrl] = useState<String | null>(null);
   const [showResponses, setShowResponses] = useState<boolean[]>([]);
   const toast = useToast();
   const isFirstRun = useRef(true);
@@ -71,6 +72,7 @@ const ToolPage: NextPage = ({}: any) => {
           prompt: prompt,
           input: input,
           type: document?.type,
+          imgUrl: imgUrl,
         }),
       });
 
@@ -105,9 +107,25 @@ const ToolPage: NextPage = ({}: any) => {
     fetchData();
   }, [toolID]);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      setSelectedFile(event.target.files[0]);
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event?.target?.files?.[0];
+    if (file) {
+      toast({
+        title: `Uploading the image...`,
+        status: "info",
+        isClosable: true,
+      });
+      const result = await uploadImageToFirebase(file);
+      toast.closeAll();
+      if (result.success) {
+        console.log("Image uploaded successfully. URL:", result.url);
+        setimgUrl(result.url!);
+        // You can now use result.url to store in Firestore or display the image
+      } else {
+        console.error("Failed to upload image:", result.error);
+      }
     }
   };
 
@@ -153,8 +171,16 @@ const ToolPage: NextPage = ({}: any) => {
   }, [geminiOutput]);
   const handleSubmit = async () => {
     setgeminiOutput((prev) => []);
-    if (inputText === "") {
+    if (document?.type === "text" && inputText === "") {
       alert("Please enter some text");
+      return;
+    }
+    if (document?.type === "img" && imgUrl === null) {
+      alert("Please upload an image");
+      return;
+    }
+    if (document?.type === "both" && (imgUrl === null || inputText === "")) {
+      alert("Please upload an image and enter some text");
       return;
     }
   };
@@ -262,7 +288,7 @@ const ToolPage: NextPage = ({}: any) => {
                 </Button>
               </Box>
             )}
-            {document.type === "image" && (
+            {document.type === "img" && (
               <Box mb={4} display="flex" alignItems="center">
                 <Button
                   as="label"
@@ -284,9 +310,11 @@ const ToolPage: NextPage = ({}: any) => {
                   size="lg"
                   onClick={handleSubmit}
                   ml={4}
+                  isDisabled={imgUrl === null || contentLoading}
                 >
                   Submit
                 </Button>
+                {imgUrl && <p>image uploaded successfully</p>}
               </Box>
             )}
             {document.type === "both" && (
@@ -322,11 +350,13 @@ const ToolPage: NextPage = ({}: any) => {
                     colorScheme="green"
                     size="lg"
                     onClick={handleSubmit}
+                    isDisabled={imgUrl === null || inputText === "" || contentLoading}
                     ml={4}
                   >
                     Submit
                   </Button>
                 </Box>
+                {imgUrl && <p>image uploaded successfully</p>}
               </Box>
             )}
           </Box>
@@ -460,5 +490,3 @@ const ToolPage: NextPage = ({}: any) => {
 };
 
 export default ToolPage;
-
-

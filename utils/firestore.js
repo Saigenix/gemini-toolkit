@@ -10,10 +10,10 @@ import {
   getDocs,
   getDoc,
   increment,
-  orderBy,  
+  orderBy,
 } from "firebase/firestore";
 import { useCollection, useDocument } from "react-firebase-hooks/firestore";
-
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 const db = getFirestore(app);
 
 export const GetAllData = async (filter = "stars") => {
@@ -153,6 +153,28 @@ export const updateStars = async (toolId, incrementBy = 1) => {
     return {
       success: false,
       message: error.message,
+    };
+  }
+};
+
+export const uploadImageToFirebase = async (file) => {
+  try {
+    const storage = getStorage(app);
+    const filename = `${Date.now()}_${file.name}`;
+    const storageRef = ref(storage, `images/${filename}`);
+    const snapshot = await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(snapshot.ref);
+
+    return {
+      success: true,
+      url: downloadURL,
+      filename: filename,
+    };
+  } catch (error) {
+    console.error("Error uploading image: ", error);
+    return {
+      success: false,
+      error: error.message,
     };
   }
 };
