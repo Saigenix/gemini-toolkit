@@ -10,21 +10,29 @@ import {
   Avatar,
   IconButton,
   useBreakpointValue,
+  useDisclosure,
+  useUpdateEffect,
+  useColorMode,
+  keyframes,
+  Text,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import siteConfig from "data/config";
 import { BellIcon } from "@chakra-ui/icons";
-import { FaBell } from "react-icons/fa";
 import { NavLink } from "components/nav-link";
 import { useScrollSpy } from "hooks/use-scrollspy";
 import { MobileNavButton } from "components/mobile-nav";
 import { MobileNavContent } from "components/mobile-nav";
-import { useDisclosure, useUpdateEffect } from "@chakra-ui/react";
 import { SignOut } from "utils/Auth";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "utils/Auth";
 import ThemeToggle from "./theme-toggle";
 import { FiMoreVertical } from "react-icons/fi";
+
+const spin = keyframes`
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+`;
 
 const Navigation: React.FC = () => {
   const mobileNav = useDisclosure();
@@ -39,6 +47,8 @@ const Navigation: React.FC = () => {
   );
   const [user, loading, error] = useAuthState(auth);
   const mobileNavBtnRef = React.useRef<HTMLButtonElement>();
+  const [showNotification, setShowNotification] = React.useState(false);
+  const { colorMode } = useColorMode();
 
   useUpdateEffect(() => {
     mobileNavBtnRef.current?.focus();
@@ -48,10 +58,14 @@ const Navigation: React.FC = () => {
     SignOut();
   };
 
+  const handleBellClick = () => {
+    setShowNotification(!showNotification);
+  };
+
   const showNotificationBell = useBreakpointValue({ base: false, md: true });
 
   return (
-    <HStack spacing="2" flexShrink={0}>
+    <HStack spacing="2" flexShrink={0} position="relative">
       {siteConfig.header.links.map(({ href, id, ...props }, i) => {
         if (href === "/signup" && user) {
           return null;
@@ -76,13 +90,50 @@ const Navigation: React.FC = () => {
       })}
 
       {showNotificationBell && (
-        <IconButton
-          aria-label="Notifications"
-          icon={<BellIcon />}
-          variant="ghost"
-          marginRight={-2}
-          fontSize="1.2rem"
-        />
+        <>
+          <IconButton
+            aria-label="Notifications"
+            icon={<BellIcon />}
+            variant="ghost"
+            marginRight={-2}
+            fontSize="1.2rem"
+            onClick={handleBellClick}
+          />
+          {showNotification && (
+            <Box
+              position="absolute"
+              top="50px"
+              right="0"
+              bg={colorMode === "light" ? "white" : "gray.700"}
+              color={colorMode === "light" ? "black" : "white"}
+              p="4"
+              borderRadius="md"
+              boxShadow="md"
+              zIndex="1"
+              width="300px"
+              display="flex"
+              alignItems="center"
+              fontWeight="bold"
+            >
+              <Box
+                as="img"
+                src="/static/images/gemini.png" 
+                alt="Website Logo"
+                borderRadius="full"
+                width="40px"
+                height="40px"
+                mr="3"
+                animation={`${spin} infinite 2s linear`}
+              />
+              <Box>
+                <Text>Hello 👋 {user?.displayName}</Text>
+                <Text fontSize="sm" opacity="0.8">
+                  Welcome to Gemini Toolkit, Let's Create Your Own AI Tools 🤩
+                </Text>
+              </Box>
+            </Box>
+          )}
+        </>
       )}
 
       <ThemeToggle />
