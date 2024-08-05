@@ -17,6 +17,8 @@ import {
   Radio,
   Textarea,
   Button,
+  Alert,
+  AlertIcon,
   Divider,
   useColorMode,
   useToast,
@@ -72,90 +74,88 @@ const CreateTool: NextPage = ({ user }: any) => {
   const [isCreating, setIsCreating] = useState(false);
   const store = useStore(selector, shallow);
 
-    const handleSubmit = async () => {
-      const promptsArr:any = []
-      var inputType = "text"
-      store.nodes.forEach((node) => {
-        if (node.type === "prompt") {
-          promptsArr.push(node.data?.text!)
-        }
-        if (node.type === "input") {
-          inputType = node.data?.type
-        }
-      })
-      // console.log(promptsArr, inputType)
-
-      const checkEmpty = (arr) => {
-        for (let i = 0; i < arr.length; i++) {
-          if (arr[i] === "") {
-            return true;
-          }
-        }
-        return false;
+  const handleSubmit = async () => {
+    const promptsArr: any = [];
+    var inputType = "text";
+    store.nodes.forEach((node) => {
+      if (node.type === "prompt") {
+        promptsArr.push(node.data?.text!);
       }
-
-      if (!name || !description || checkEmpty(promptsArr)) {
-        toast({
-          title: "Error",
-          description: "Please fill out all Prompt fields.",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
-        return;
+      if (node.type === "input") {
+        inputType = node.data?.type;
       }
+    });
+    // console.log(promptsArr, inputType)
 
-      setIsCreating(true);
-
-      const result = await addSimpleTool({
-        additional,
-        creatorName: user?.displayName || "",
-        description,
-        img: "https://example.com/image.jpg",
-        prompts: promptsArr,
-        stars: 5,
-        status: true,
-        toolName: name,
-        type: inputType,
-        userId: user?.uid || "",
-      });
-
-      setIsCreating(false);
-
-      if (result.success) {
-        toast({
-          title: "Success",
-          description: "Tool created successfully.",
-          status: "success",
-          duration: 5000,
-          isClosable: true,
-        });
-        // console.log("Document added with ID: ", result.id);
-
-        setName("");
-        setDescription("");
-        setAdditional("");
-        store.makeEmpty();
-      } else {
-        toast({
-          title: "Error",
-          description: "Failed to create the tool.",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
-        // console.error("Failed to add document: ", result.error);
+    const checkEmpty = (arr) => {
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i] === "") {
+          return true;
+        }
       }
+      return false;
     };
 
-    const isFormValid = name && description;
+    if (!name || !description || checkEmpty(promptsArr)) {
+      toast({
+        title: "Error",
+        description: "Please fill out all Prompt fields.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
 
+    setIsCreating(true);
 
+    const result = await addSimpleTool({
+      additional,
+      creatorName: user?.displayName || "",
+      description,
+      img: "https://example.com/image.jpg",
+      prompts: promptsArr,
+      stars: 5,
+      status: true,
+      toolName: name,
+      type: inputType,
+      userId: user?.uid || "",
+    });
+
+    setIsCreating(false);
+
+    if (result.success) {
+      toast({
+        title: "Success",
+        description: "Tool created successfully.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      // console.log("Document added with ID: ", result.id);
+
+      setName("");
+      setDescription("");
+      setAdditional("");
+      store.makeEmpty();
+    } else {
+      toast({
+        title: "Error",
+        description: "Failed to create the tool.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+      // console.error("Failed to add document: ", result.error);
+    }
+  };
+
+  const isFormValid = name && description;
 
   return (
     <Box position="relative" overflow="hidden" p={{ base: 4, md: 8 }}>
       <BackgroundGradient height={400} zIndex="-1" />
-      <Container maxW="container.xl" mt={10} p={4}>
+      <Container maxW="container.xl" mt={12} p={4}>
         <Flex justifyContent="space-between" mb={4} alignItems="center">
           <Heading size="md">Tool Details</Heading>
           <Flex alignItems="center">
@@ -288,6 +288,7 @@ const CreateTool: NextPage = ({ user }: any) => {
             orientation="vertical"
             display={{ base: "none", md: "block" }}
           />
+
           <Box
             width={{ base: "100%", md: "70%" }}
             padding={2}
@@ -296,6 +297,20 @@ const CreateTool: NextPage = ({ user }: any) => {
             display={{ base: "block", md: "block" }}
             height={{ base: "400px", md: "100%" }}
           >
+            <Alert
+              status="info"
+              variant="subtle"
+              alignItems="center"
+              justifyContent="center"
+              textAlign="center"
+              borderRadius="md"
+              maxWidth={400}
+              mb={4}
+            >
+            <AlertIcon />
+              Recommended to use on Laptop or Desktop
+            </Alert>
+
             <ReactFlow
               colorMode="dark"
               nodeTypes={nodeTypes}

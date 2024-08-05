@@ -15,13 +15,12 @@ export const Logo: React.FC = (props) => {
         position="absolute"
         left={2}
       />
-      <Text fontSize="xl" fontWeight="bold" ml={1} color={color}>
+      <Text fontSize="xl" ml={1} fontWeight="bold" color={color}>
         Gemini Toolkit
       </Text>
     </Flex>
   );
 };
-
 
 
 
