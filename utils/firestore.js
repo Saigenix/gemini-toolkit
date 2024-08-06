@@ -182,7 +182,6 @@ export const uploadImageToFirebase = async (file) => {
 export const updateToolDocument = async (documentId, updateData) => {
   try {
     const docRef = doc(db, "data", documentId);
-
     await updateDoc(docRef, {
       ...updateData,
       updatedAt: new Date(), // Adding a timestamp for when the document was last updated

@@ -1,7 +1,8 @@
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleQuestion } from "@fortawesome/free-solid-svg-icons";
+import { useSearchParams } from "next/navigation";
 import {
   Box,
   Button,
@@ -18,19 +19,51 @@ import {
   useToast,
   SimpleGrid,
   Spinner,
+  Center,
 } from "@chakra-ui/react";
 import { BackgroundGradient } from "components/gradients/background-gradient";
 import { SEO } from "components/seo/seo";
-import { addSimpleTool } from "utils/firestore";
+import { updateToolDocument, getDocumentUsingToolID } from "utils/firestore";
 import isAuth from "hooks/isAuth";
+
 const EditSimple: React.FC = ({ user }: any) => {
+  const [toolID, setToolID] = useState<string | null>(null);
   const toast = useToast();
+  const [document, setDocument] = useState<any>(null);
   const [type, setType] = useState("text");
+  const [loading, setLoading] = useState(true);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [prompt, setPrompt] = useState("");
   const [additional, setAdditional] = useState("");
   const [isCreating, setIsCreating] = useState(false);
+  const searchParams = useSearchParams();
+  const isFirstRun = useRef(true);
+  useEffect(() => {
+    const search = searchParams?.get("toolID");
+    if (search) {
+      setToolID(search);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (toolID) {
+        setLoading(true);
+        try {
+          const { data, error } = await getDocumentUsingToolID(toolID);
+          // console.log(data, toolID);
+          if (error) throw error;
+          setDocument(data);
+        } catch (err) {
+          console.log(err);
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+    fetchData();
+  }, [toolID]);
 
   const handleSubmit = async () => {
     if (!name || !description || !prompt) {
@@ -46,11 +79,11 @@ const EditSimple: React.FC = ({ user }: any) => {
 
     setIsCreating(true);
 
-    const result = await addSimpleTool({
+    const result = await updateToolDocument(toolID, {
       additional,
       creatorName: user?.displayName || "",
       description,
-      img: "https://example.com/image.jpg",
+      img: "",
       prompts: [prompt],
       stars: 5,
       status: true,
@@ -64,12 +97,12 @@ const EditSimple: React.FC = ({ user }: any) => {
     if (result.success) {
       toast({
         title: "Success",
-        description: "Tool created successfully.",
+        description: "Tool Updated successfully.",
         status: "success",
         duration: 5000,
         isClosable: true,
       });
-      console.log("Document added with ID: ", result.id);
+    //   console.log("Document added with ID: ", result.id);
 
       setName("");
       setDescription("");
@@ -79,7 +112,7 @@ const EditSimple: React.FC = ({ user }: any) => {
     } else {
       toast({
         title: "Error",
-        description: "Failed to create the tool.",
+        description: "Failed to update the tool."+ result.error,
         status: "error",
         duration: 5000,
         isClosable: true,
@@ -88,15 +121,38 @@ const EditSimple: React.FC = ({ user }: any) => {
     }
   };
 
-  const isFormValid = name && description && prompt;
+  useEffect(() => {
+    if (document) {
+      setName(document.toolName);
+      setDescription(document.description);
+      setPrompt(document.prompts[0]);
+      setType(document.type);
+      setAdditional(document.additional);
+    }
 
+  }, [document]);
+
+  const isFormValid = name && description && prompt;
+  if (loading) {
+    return (
+      <Center height="100%" pt="20">
+        <Spinner
+          thickness="4px"
+          speed="0.65s"
+          emptyColor="gray.200"
+          color="blue.500"
+          size="xl"
+        />
+      </Center>
+    );
+  }
   return (
     <Box position="relative" overflow="hidden" p={{ base: 4, md: 8 }}>
       <BackgroundGradient height={400} zIndex="-1" />
       <SEO title="Create Tool" description="Create a new tool" />
       <Container maxW="container.md" mt={10}>
         <Heading as="h1" size="xl" mt={20} mb={5} textAlign="center">
-          Create Simple Tool
+          Edit Tool
         </Heading>
         <Box
           p={6}
@@ -210,7 +266,7 @@ const EditSimple: React.FC = ({ user }: any) => {
             onClick={handleSubmit}
             isDisabled={!isFormValid || isCreating}
           >
-            {isCreating ? <Spinner size="sm" /> : "Create"}
+            {isCreating ? <Spinner size="sm" /> : "Edit"}
           </Button>
         </Box>
       </Container>

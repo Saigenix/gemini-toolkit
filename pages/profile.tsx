@@ -93,7 +93,6 @@ const Profile: NextPage = () => {
   };
 
   return (
-    
     <Box>
       <SEO title="NexAI" description="Next Generation AI" />
       <Box display={{ base: "block", md: "flex" }}>
@@ -230,119 +229,139 @@ const HighlightsSection = ({ highlightsData, togglePublicPrivate }) => {
 
   return (
     <Flex direction="column" minHeight="100vh">
-    <Box>
-      <Heading
-        fontWeight={500}
-        fontSize={{ base: "15px", md: "20px" }}
-        as="h2"
-        size="lg"
-        mt={20}
-        textAlign={{ base: "center", md: "left" }}
-      >
-        Your Tools
-        <FontAwesomeIcon
-          style={{ marginLeft: "0.5rem", height: 20 }}
-          icon={faArrowRightLong}
-        />
-      </Heading>
-      <Text
-        fontWeight={500}
-        textAlign={{ base: "center", md: "left" }}
-        mt={3}
-        marginBottom={-15}
-      >
-        Total Tools: {highlightsData.length}
-      </Text>
-      <Highlights>
-        {highlightsData.map((highlight, index) => (
-          <HighlightsItem key={index} title={highlight.toolName}>
-            <Icon
-              as={FontAwesomeIcon}
-              icon={faEdit}
-              boxSize="1.2rem"
-              position="absolute"
-              top={9}
-              right={4}
-              cursor="pointer"
-              onClick={() => router.push(`/edit-tool?toolID=${highlight.id}`)}
-            />
-            <Flex direction="column" height="100%">
-              <Box flex="1">
-                <Text color="muted" fontSize="lg">
-                  {highlight.description}
-                </Text>
-                <Flex justifyContent="space-between" alignItems="center" mt={3}>
-                  <ButtonGroup spacing={3} alignItems="center">
-                    <ButtonLink
-                      marginTop={2}
-                      colorScheme="primary"
-                      fontSize="1.2rem"
-                      width={110}
-                      height={45}
-                      href={`/tool?toolID=${highlight.id}`}
-                    >
-                      Use
-                      <FontAwesomeIcon
-                        style={{ marginLeft: "0.5rem" }}
-                        icon={faArrowUpRightFromSquare}
+      <Box>
+        <Heading
+          fontWeight={500}
+          fontSize={{ base: "15px", md: "20px" }}
+          as="h2"
+          size="lg"
+          mt={20}
+          textAlign={{ base: "center", md: "left" }}
+        >
+          Your Tools
+          <FontAwesomeIcon
+            style={{ marginLeft: "0.5rem", height: 20 }}
+            icon={faArrowRightLong}
+          />
+        </Heading>
+        <Text
+          fontWeight={500}
+          textAlign={{ base: "center", md: "left" }}
+          mt={3}
+          marginBottom={-15}
+        >
+          Total Tools: {highlightsData.length}
+        </Text>
+        <Highlights>
+          {highlightsData.map((highlight, index) => (
+            <HighlightsItem key={index} title={highlight.toolName}>
+              <Icon
+                as={FontAwesomeIcon}
+                icon={faEdit}
+                boxSize="1.2rem"
+                position="absolute"
+                top={9}
+                right={4}
+                cursor="pointer"
+                onClick={() => {
+                  if(highlight.prompts.length >  1) {
+                    toast({
+                      title: "Error",
+                      description: "Editing Complex tools is coming soon...",
+                      status: "error",
+                      duration: 5000,
+                      isClosable: true,
+                    });
+                    return;
+                  }
+                  router.push(`/edit-tool?toolID=${highlight.id}`);
+                }}
+              />
+              <Flex direction="column" height="100%">
+                <Box flex="1">
+                  <Text color="muted" fontSize="lg">
+                    {highlight.description}
+                  </Text>
+                  <Flex
+                    justifyContent="space-between"
+                    alignItems="center"
+                    mt={3}
+                  >
+                    <ButtonGroup spacing={3} alignItems="center">
+                      <ButtonLink
+                        marginTop={2}
+                        colorScheme="primary"
+                        fontSize="1.2rem"
+                        width={110}
+                        height={45}
+                        href={`/tool?toolID=${highlight.id}`}
+                      >
+                        Use
+                        <FontAwesomeIcon
+                          style={{ marginLeft: "0.5rem" }}
+                          icon={faArrowUpRightFromSquare}
+                        />
+                      </ButtonLink>
+                    </ButtonGroup>
+                  </Flex>
+                </Box>
+                <Flex
+                  justifyContent="space-between"
+                  alignItems="center"
+                  mt={8}
+                  py={2}
+                  borderTop="1px solid #03C988"
+                >
+                  <Flex mt={3} alignItems="center">
+                    <Flex alignItems="center" mr="1.2rem">
+                      <Icon
+                        as={likes[highlight.id] ? BsHeartFill : BsHeart}
+                        boxSize="1.2rem"
+                        cursor="pointer"
+                        marginRight="0.5rem"
+                        color={likes[highlight.id] ? "red" : ""}
+                        onClick={() => handleLike(highlight.id)}
                       />
-                    </ButtonLink>
-                  </ButtonGroup>
-                </Flex>
-              </Box>
-              <Flex
-                justifyContent="space-between"
-                alignItems="center"
-                mt={8}
-                py={2}
-                borderTop="1px solid #03C988"
-              >
-                <Flex mt={3} alignItems="center">
-                  <Flex alignItems="center" mr="1.2rem">
+                      <Text fontSize="sm">{likes[highlight.id] || 0}</Text>
+                    </Flex>
                     <Icon
-                      as={likes[highlight.id] ? BsHeartFill : BsHeart}
+                      as={SlActionRedo}
                       boxSize="1.2rem"
                       cursor="pointer"
-                      marginRight="0.5rem"
-                      color={likes[highlight.id] ? "red" : ""}
-                      onClick={() => handleLike(highlight.id)}
+                      marginRight="1.2rem"
+                      onClick={() => handleShare(highlight.id)}
                     />
-                    <Text fontSize="sm">{likes[highlight.id] || 0}</Text>
+                    <Icon
+                      as={BsBookmarkPlus}
+                      boxSize="1.2rem"
+                      cursor="pointer"
+                      marginRight="1.2rem"
+                      onClick={() => handleSave(highlight.id)}
+                    />
                   </Flex>
-                  <Icon
-                    as={SlActionRedo}
-                    boxSize="1.2rem"
-                    cursor="pointer"
-                    marginRight="1.2rem"
-                    onClick={() => handleShare(highlight.id)}
-                  />
-                  <Icon
-                    as={BsBookmarkPlus}
-                    boxSize="1.2rem"
-                    cursor="pointer"
-                    marginRight="1.2rem"
-                    onClick={() => handleSave(highlight.id)}
-                  />
-                </Flex>
-                <Flex mt={3} alignItems="center">
-                  <Text paddingLeft={8}>
-                    {highlight.status ? "Public" : "Private"}
-                  </Text>
-                  <Switch
-                    paddingLeft={2}
-                    isChecked={highlight.status}
-                    onChange={() =>
-                      togglePublicPrivate(index, highlight.id, highlight.status)
-                    }
-                    colorScheme="green"
-                  />
+                  <Flex mt={3} alignItems="center">
+                    <Text paddingLeft={8}>
+                      {highlight.status ? "Public" : "Private"}
+                    </Text>
+                    <Switch
+                      paddingLeft={2}
+                      isChecked={highlight.status}
+                      onChange={() =>
+                        togglePublicPrivate(
+                          index,
+                          highlight.id,
+                          highlight.status
+                        )
+                      }
+                      colorScheme="green"
+                    />
+                  </Flex>
                 </Flex>
               </Flex>
-            </Flex>
-          </HighlightsItem>
-        ))}
-      </Highlights>
-    </Box>
+            </HighlightsItem>
+          ))}
+        </Highlights>
+      </Box>
     </Flex>
   );
 };
