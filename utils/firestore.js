@@ -178,3 +178,27 @@ export const uploadImageToFirebase = async (file) => {
     };
   }
 };
+
+export const updateToolDocument = async (documentId, updateData) => {
+  try {
+    const docRef = doc(db, "data", documentId);
+
+    await updateDoc(docRef, {
+      ...updateData,
+      updatedAt: new Date(), // Adding a timestamp for when the document was last updated
+    });
+
+    return {
+      success: true,
+      message: "Document updated successfully",
+      error: null,
+    };
+  } catch (error) {
+    console.error("Error updating document: ", error);
+    return {
+      success: false,
+      message: "Failed to update document",
+      error: error.message,
+    };
+  }
+};
