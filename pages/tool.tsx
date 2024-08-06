@@ -32,7 +32,10 @@ import { SEO } from "components/seo/seo";
 import { faCloudUploadAlt, faCopy } from "@fortawesome/free-solid-svg-icons";
 import ReactMarkdown from "react-markdown";
 import { MdVerified } from "react-icons/md";
-import { faCircleQuestion } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCircleQuestion,
+  faCheckCircle,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { uploadImageToFirebase } from "utils/firestore";
 
@@ -255,157 +258,200 @@ const ToolPage: NextPage = ({}: any) => {
             </Flex>
           </Box>
 
-        <Box
-          flex={{ base: "none", md: "3" }}
-          ml={{ base: 0, md: 6 }}
-          mt={{ base: 4, md: 0 }}
-        >
-          <Box mb={4}>
-            {document.type === "text" && (
-              <Box mb={4}>
-                <Flex>
-                  <Text fontSize={18} fontWeight={600} pb={3}>
-                    Enter Text
-                  </Text>
-                  <Tooltip
-                    label={document.additional}
-                    placement="right"
-                    hasArrow
-                  >
-                    <FontAwesomeIcon
-                      style={{ marginTop: 5, height: 15, marginLeft: 10 }}
-                      icon={faCircleQuestion}
-                    />
-                  </Tooltip>
-                </Flex>
-                <Textarea
-                  value={inputText}
-                  onChange={(e) => setInputText(e.target.value)}
-                  placeholder="Enter your text..."
-                  size="lg"
-                />
-                <Button
-                  colorScheme="green"
-                  size="lg"
-                  onClick={handleSubmit}
-                  mt={4}
-                  isDisabled={inputText === "" || contentLoading}
-                >
-                  Submit
-                </Button>
-              </Box>
-            )}
-            {document.type === "img" && (
-              <Box mb={4} display="flex" alignItems="center">
-                <Button
-                  as="label"
-                  htmlFor="file-upload"
-                  colorScheme="purple"
-                  size="lg"
-                >
-                  <FontAwesomeIcon icon={faCloudUploadAlt} />
-                  &nbsp;Upload Image
-                </Button>
-                <Input
-                  id="file-upload"
-                  type="file"
-                  onChange={handleFileChange}
-                  display="none"
-                />
-                <Button
-                  colorScheme="green"
-                  size="lg"
-                  onClick={handleSubmit}
-                  ml={4}
-                  isDisabled={imgUrl === null || contentLoading}
-                >
-                  Submit
-                </Button>
-                {imgUrl && <p>image uploaded successfully</p>}
-              </Box>
-            )}
-            {document.type === "both" && (
-              <Box mb={4}>
+          <Box
+            flex={{ base: "none", md: "3" }}
+            ml={{ base: 0, md: 6 }}
+            mt={{ base: 4, md: 0 }}
+          >
+            <Box mb={4}>
+              {document.type === "text" && (
                 <Box mb={4}>
-                  <Text fontSize={18} fontWeight={600} pb={3}>
-                    Enter Text
-                  </Text>
+                  <Flex>
+                    <Text fontSize={18} fontWeight={600} pb={3}>
+                      Enter Text
+                    </Text>
+                    <Tooltip
+                      label={document.additional}
+                      placement="right"
+                      hasArrow
+                    >
+                      <FontAwesomeIcon
+                        style={{ marginTop: 5, height: 15, marginLeft: 10 }}
+                        icon={faCircleQuestion}
+                      />
+                    </Tooltip>
+                  </Flex>
                   <Textarea
                     value={inputText}
                     onChange={(e) => setInputText(e.target.value)}
-                    placeholder="Enter your text"
+                    placeholder="Enter your text..."
                     size="lg"
-                  />
-                </Box>
-                <Box display="flex" alignItems="center">
-                  <Button
-                    as="label"
-                    htmlFor="file-upload"
-                    colorScheme="purple"
-                    size="lg"
-                  >
-                    Upload Image &nbsp;
-                    <FontAwesomeIcon icon={faCloudUploadAlt} />
-                  </Button>
-                  <Input
-                    id="file-upload"
-                    type="file"
-                    onChange={handleFileChange}
-                    display="none"
                   />
                   <Button
                     colorScheme="green"
                     size="lg"
                     onClick={handleSubmit}
-                    isDisabled={imgUrl === null || inputText === "" || contentLoading}
-                    ml={4}
+                    mt={4}
+                    isDisabled={inputText === "" || contentLoading}
                   >
                     Submit
                   </Button>
                 </Box>
-                {imgUrl && <p>image uploaded successfully</p>}
-              </Box>
-            )}
-          </Box>
-          <Box>
-            {contentLoading ? (
-              <Center height="100%" pt="20">
-                <Spinner
-                  thickness="2px"
-                  speed="0.65s"
-                  emptyColor="red.200"
-                  color="blue.500"
-                  size="lg"
-                />
-              </Center>
-            ) : (
-              geminiOutput.map((response, index) => (
+              )}
+              {document.type === "img" && (
                 <Box
-                  key={index}
                   mb={4}
-                  p={4}
-                  border="1px solid gray"
-                  borderRadius="md"
+                  display="flex"
+                  flexDirection="column"
+                  alignItems="left"
                 >
-                  <Heading
-                    fontSize="lg"
-                    mb={2}
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="space-between"
+                  <Box display="flex" alignItems="left" mb={4}>
+                    <Button
+                      as="label"
+                      htmlFor="file-upload"
+                      colorScheme="purple"
+                      size="lg"
+                    >
+                      <FontAwesomeIcon icon={faCloudUploadAlt} />
+                      &nbsp;Upload Image
+                    </Button>
+                    <Input
+                      id="file-upload"
+                      type="file"
+                      onChange={handleFileChange}
+                      display="none"
+                    />
+                    <Button
+                      colorScheme="green"
+                      size="lg"
+                      onClick={handleSubmit}
+                      ml={4}
+                      isDisabled={imgUrl === null || contentLoading}
+                    >
+                      Submit
+                    </Button>
+                  </Box>
+                  {imgUrl && (
+                    <Flex
+                      mt={4}
+                      alignItems="center"
+                      bg="green.100"
+                      p={3}
+                      borderRadius="md"
+                      border="1px"
+                      borderColor="green.200"
+                      maxWidth={300}
+                      justifyContent="center"
+                    >
+                      <FontAwesomeIcon icon={faCheckCircle} color="green" />
+                      <Text ml={2} fontWeight="bold" color="green.800">
+                        Image uploaded successfully
+                      </Text>
+                    </Flex>
+                  )}
+                </Box>
+              )}
+              {document.type === "both" && (
+                <Box mb={4}>
+                  <Box mb={4}>
+                    <Text fontSize={18} fontWeight={600} pb={3}>
+                      Enter Text
+                    </Text>
+                    <Textarea
+                      value={inputText}
+                      onChange={(e) => setInputText(e.target.value)}
+                      placeholder="Enter your text"
+                      size="lg"
+                    />
+                  </Box>
+                  <Box display="flex" alignItems="center">
+                    <Button
+                      as="label"
+                      htmlFor="file-upload"
+                      colorScheme="purple"
+                      size="lg"
+                    >
+                      Upload Image &nbsp;
+                      <FontAwesomeIcon icon={faCloudUploadAlt} />
+                    </Button>
+                    <Input
+                      id="file-upload"
+                      type="file"
+                      onChange={handleFileChange}
+                      display="none"
+                    />
+                    <Button
+                      colorScheme="green"
+                      size="lg"
+                      onClick={handleSubmit}
+                      isDisabled={
+                        imgUrl === null || inputText === "" || contentLoading
+                      }
+                      ml={4}
+                    >
+                      Submit
+                    </Button>
+                  </Box>
+                  {imgUrl && (
+                    <Flex
+                      mt={4}
+                      alignItems="center"
+                      bg="green.100"
+                      p={3}
+                      borderRadius="md"
+                      border="1px"
+                      borderColor="green.200"
+                      maxWidth={300}
+                      justifyContent="center"
+                    >
+                      <FontAwesomeIcon icon={faCheckCircle} color="green" />
+                      <Text ml={2} fontWeight="bold" color="green.800">
+                        Image uploaded successfully
+                      </Text>
+                    </Flex>
+                  )}
+                </Box>
+              )}
+            </Box>
+            <Box>
+              {contentLoading ? (
+                <Center height="100%" pt="20">
+                  <Spinner
+                    thickness="2px"
+                    speed="0.65s"
+                    emptyColor="red.200"
+                    color="blue.500"
+                    size="lg"
+                  />
+                </Center>
+              ) : (
+                geminiOutput.map((response, index) => (
+                  <Box
+                    key={index}
+                    mb={4}
+                    p={4}
+                    border="1px solid gray"
+                    borderRadius="md"
                   >
-                    <Box>
-                      {index + 1 == geminiOutput.length ? "Final " : ""}
-                      Response {index + 1}
-                      <Button
-                        marginLeft={3}
-                        size="xs"
-                        fontSize={15}
-                        onClick={() => toggleResponse(index)}
-                      >
-                        {showResponses[index] ? "Hide" : "Show"}
-                      </Button>
-                    </Box>
+                    <Heading
+                      fontSize="lg"
+                      mb={2}
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="space-between"
+                    >
+                      <Box>
+                        {index + 1 == geminiOutput.length ? "Final " : ""}
+                        Response {index + 1}
+                        <Button
+                          marginLeft={3}
+                          size="xs"
+                          fontSize={15}
+                          onClick={() => toggleResponse(index)}
+                        >
+                          {showResponses[index] ? "Hide" : "Show"}
+                        </Button>
+                      </Box>
 
                       <Box display="flex" alignItems="center">
                         <Box ml={4} display="flex" alignItems="center">

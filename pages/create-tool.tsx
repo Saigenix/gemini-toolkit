@@ -17,6 +17,14 @@ import {
   Radio,
   Textarea,
   Button,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalFooter,
+  ModalCloseButton,
+  ModalOverlay,
+  ModalContent,
+  useDisclosure,
   Alert,
   AlertIcon,
   Divider,
@@ -49,6 +57,7 @@ import Prompt from "components/nodes/prompt";
 import Out from "components/nodes/output";
 import isAuth from "hooks/isAuth";
 import { addSimpleTool } from "utils/firestore";
+import { useRouter } from "next/router";
 
 const selector = (store) => ({
   nodes: store.nodes,
@@ -66,6 +75,7 @@ const selector = (store) => ({
 const nodeTypes = { input: InputF, prompt: Prompt, out: Out };
 
 const CreateTool: NextPage = ({ user }: any) => {
+  const router = useRouter();
   const toast = useToast();
   const { colorMode } = useColorMode();
   const [name, setName] = useState("");
@@ -73,6 +83,9 @@ const CreateTool: NextPage = ({ user }: any) => {
   const [additional, setAdditional] = useState("");
   const [isCreating, setIsCreating] = useState(false);
   const store = useStore(selector, shallow);
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [createdToolId, setCreatedToolId] = useState("");
 
   const handleSubmit = async () => {
     const promptsArr: any = [];
@@ -134,6 +147,11 @@ const CreateTool: NextPage = ({ user }: any) => {
       });
       // console.log("Document added with ID: ", result.id);
 
+      if (result.id) {
+        setCreatedToolId(result.id);
+        onOpen();
+      }
+
       setName("");
       setDescription("");
       setAdditional("");
@@ -148,6 +166,10 @@ const CreateTool: NextPage = ({ user }: any) => {
       });
       // console.error("Failed to add document: ", result.error);
     }
+  };
+
+  const handleUseTool = () => {
+    router.push(`/tool?toolID=/${createdToolId}`); 
   };
 
   const isFormValid = name && description;
@@ -297,20 +319,6 @@ const CreateTool: NextPage = ({ user }: any) => {
             display={{ base: "block", md: "block" }}
             height={{ base: "400px", md: "100%" }}
           >
-            <Alert
-              status="info"
-              variant="subtle"
-              alignItems="center"
-              justifyContent="center"
-              textAlign="center"
-              borderRadius="md"
-              maxWidth={400}
-              mb={4}
-            >
-            <AlertIcon />
-              Recommended to use on Laptop or Desktop
-            </Alert>
-
             <ReactFlow
               colorMode="dark"
               nodeTypes={nodeTypes}
@@ -347,8 +355,29 @@ const CreateTool: NextPage = ({ user }: any) => {
           </Box>
         </Flex>
       </Container>
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Tool Created Successfully</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text>Your tool has been created successfully!</Text>
+            <Button mt={4} colorScheme="purple" onClick={handleUseTool}>
+              Use Tool
+            </Button>
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="ghost" onClick={onClose}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 };
 
 export default isAuth(CreateTool);
+
+
