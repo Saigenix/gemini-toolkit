@@ -26,13 +26,6 @@ import {
   Flex,
   Spinner,
   Center,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
   useDisclosure,
   useClipboard,
   useToast,
@@ -42,10 +35,11 @@ import { BackgroundGradient } from "components/gradients/background-gradient";
 import { ButtonLink } from "components/button-link/button-link";
 import { Highlights, HighlightsItem } from "components/highlights";
 import { useState, useEffect } from "react";
-import { getDocumentsByUserId, updateDocumentStatus } from "utils/firestore";
+import { getDocumentsByUserId, updateToolStatus } from "utils/firestore";
 import { useRouter } from "next/router";
 import { GetAllData, saveTool } from "utils/firestore";
-
+import { id } from "date-fns/locale";
+import ToolBoxProfile from "components/tool-box-profile";
 const Profile: NextPage = () => {
   const [user, loading, error] = useAuthState(auth);
   const [documents, setDocuments] = useState<any>([]);
@@ -73,25 +67,6 @@ const Profile: NextPage = () => {
     fetchData();
   }, [user, loading]);
 
-  const togglePublicPrivate = async (
-    index: number,
-    id: string,
-    status: boolean
-  ) => {
-    try {
-      const result = await updateDocumentStatus(id, !status);
-      if (result.success) {
-        const updatedHighlights = [...documents];
-        updatedHighlights[index].status = !status;
-        setDocuments(updatedHighlights);
-      } else {
-        console.error("Failed to update status", result.error);
-      }
-    } catch (error) {
-      console.error("Failed to toggle status", error);
-    }
-  };
-
   return (
     <Box>
       <SEO title="NexAI" description="Next Generation AI" />
@@ -114,10 +89,7 @@ const Profile: NextPage = () => {
               />
             </Center>
           ) : (
-            <HighlightsSection
-              highlightsData={documents}
-              togglePublicPrivate={togglePublicPrivate}
-            />
+            <HighlightsSection highlightsData={documents} />
           )}
         </Box>
       </Box>
@@ -160,7 +132,7 @@ const ExploreTools = ({ displayName }: any) => {
   );
 };
 
-const HighlightsSection = ({ highlightsData, togglePublicPrivate }) => {
+const HighlightsSection = ({ highlightsData }) => {
   const router = useRouter();
   const [likes, setLikes] = React.useState<{ [key: string]: number }>({});
   const [saved, setSaved] = React.useState<{ [key: string]: boolean }>({});
@@ -175,6 +147,7 @@ const HighlightsSection = ({ highlightsData, togglePublicPrivate }) => {
       setLink(window.location.href);
     }
   }, []);
+
 
   const handleLike = (toolId: string) => {
     setLikes((prevLikes) => ({
@@ -254,111 +227,7 @@ const HighlightsSection = ({ highlightsData, togglePublicPrivate }) => {
         </Text>
         <Highlights>
           {highlightsData.map((highlight, index) => (
-            <HighlightsItem key={index} title={highlight.toolName}>
-              <Icon
-                as={FontAwesomeIcon}
-                icon={faEdit}
-                boxSize="1.2rem"
-                position="absolute"
-                top={9}
-                right={4}
-                cursor="pointer"
-                onClick={() => {
-                  if(highlight.prompts.length >  1) {
-                    toast({
-                      title: "Error",
-                      description: "Editing Complex tools is coming soon...",
-                      status: "error",
-                      duration: 5000,
-                      isClosable: true,
-                    });
-                    return;
-                  }
-                  router.push(`/edit-tool?toolID=${highlight.id}`);
-                }}
-              />
-              <Flex direction="column" height="100%">
-                <Box flex="1">
-                  <Text color="muted" fontSize="lg">
-                    {highlight.description}
-                  </Text>
-                  <Flex
-                    justifyContent="space-between"
-                    alignItems="center"
-                    mt={3}
-                  >
-                    <ButtonGroup spacing={3} alignItems="center">
-                      <ButtonLink
-                        marginTop={2}
-                        colorScheme="primary"
-                        fontSize="1.2rem"
-                        width={110}
-                        height={45}
-                        href={`/tool?toolID=${highlight.id}`}
-                      >
-                        Use
-                        <FontAwesomeIcon
-                          style={{ marginLeft: "0.5rem" }}
-                          icon={faArrowUpRightFromSquare}
-                        />
-                      </ButtonLink>
-                    </ButtonGroup>
-                  </Flex>
-                </Box>
-                <Flex
-                  justifyContent="space-between"
-                  alignItems="center"
-                  mt={8}
-                  py={2}
-                  borderTop="1px solid #03C988"
-                >
-                  <Flex mt={3} alignItems="center">
-                    <Flex alignItems="center" mr="1.2rem">
-                      <Icon
-                        as={likes[highlight.id] ? BsHeartFill : BsHeart}
-                        boxSize="1.2rem"
-                        cursor="pointer"
-                        marginRight="0.5rem"
-                        color={likes[highlight.id] ? "red" : ""}
-                        onClick={() => handleLike(highlight.id)}
-                      />
-                      <Text fontSize="sm">{likes[highlight.id] || 0}</Text>
-                    </Flex>
-                    <Icon
-                      as={SlActionRedo}
-                      boxSize="1.2rem"
-                      cursor="pointer"
-                      marginRight="1.2rem"
-                      onClick={() => handleShare(highlight.id)}
-                    />
-                    <Icon
-                      as={BsBookmarkPlus}
-                      boxSize="1.2rem"
-                      cursor="pointer"
-                      marginRight="1.2rem"
-                      onClick={() => handleSave(highlight.id)}
-                    />
-                  </Flex>
-                  <Flex mt={3} alignItems="center">
-                    <Text paddingLeft={8}>
-                      {highlight.status ? "Public" : "Private"}
-                    </Text>
-                    <Switch
-                      paddingLeft={2}
-                      isChecked={highlight.status}
-                      onChange={() =>
-                        togglePublicPrivate(
-                          index,
-                          highlight.id,
-                          highlight.status
-                        )
-                      }
-                      colorScheme="green"
-                    />
-                  </Flex>
-                </Flex>
-              </Flex>
-            </HighlightsItem>
+            <ToolBoxProfile key={index} highlight={highlight} index={index} />
           ))}
         </Highlights>
       </Box>
