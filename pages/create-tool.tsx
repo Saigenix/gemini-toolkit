@@ -17,6 +17,16 @@ import {
   Radio,
   Textarea,
   Button,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalFooter,
+  ModalCloseButton,
+  ModalOverlay,
+  ModalContent,
+  useDisclosure,
+  Alert,
+  AlertIcon,
   Divider,
   useColorMode,
   useToast,
@@ -47,6 +57,7 @@ import Prompt from "components/nodes/prompt";
 import Out from "components/nodes/output";
 import isAuth from "hooks/isAuth";
 import { addSimpleTool } from "utils/firestore";
+import { useRouter } from "next/router";
 
 const selector = (store) => ({
   nodes: store.nodes,
@@ -64,6 +75,7 @@ const selector = (store) => ({
 const nodeTypes = { input: InputF, prompt: Prompt, out: Out };
 
 const CreateTool: NextPage = ({ user }: any) => {
+  const router = useRouter();
   const toast = useToast();
   const { colorMode } = useColorMode();
   const [name, setName] = useState("");
@@ -72,90 +84,100 @@ const CreateTool: NextPage = ({ user }: any) => {
   const [isCreating, setIsCreating] = useState(false);
   const store = useStore(selector, shallow);
 
-    const handleSubmit = async () => {
-      const promptsArr:any = []
-      var inputType = "text"
-      store.nodes.forEach((node) => {
-        if (node.type === "prompt") {
-          promptsArr.push(node.data?.text!)
-        }
-        if (node.type === "input") {
-          inputType = node.data?.type
-        }
-      })
-      // console.log(promptsArr, inputType)
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [createdToolId, setCreatedToolId] = useState("");
 
-      const checkEmpty = (arr) => {
-        for (let i = 0; i < arr.length; i++) {
-          if (arr[i] === "") {
-            return true;
-          }
-        }
-        return false;
+  const handleSubmit = async () => {
+    const promptsArr: any = [];
+    var inputType = "text";
+    store.nodes.forEach((node) => {
+      if (node.type === "prompt") {
+        promptsArr.push(node.data?.text!);
       }
-
-      if (!name || !description || checkEmpty(promptsArr)) {
-        toast({
-          title: "Error",
-          description: "Please fill out all Prompt fields.",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
-        return;
+      if (node.type === "input") {
+        inputType = node.data?.type;
       }
+    });
+    // console.log(promptsArr, inputType)
 
-      setIsCreating(true);
-
-      const result = await addSimpleTool({
-        additional,
-        creatorName: user?.displayName || "",
-        description,
-        img: "https://example.com/image.jpg",
-        prompts: promptsArr,
-        stars: 5,
-        status: true,
-        toolName: name,
-        type: inputType,
-        userId: user?.uid || "",
-      });
-
-      setIsCreating(false);
-
-      if (result.success) {
-        toast({
-          title: "Success",
-          description: "Tool created successfully.",
-          status: "success",
-          duration: 5000,
-          isClosable: true,
-        });
-        // console.log("Document added with ID: ", result.id);
-
-        setName("");
-        setDescription("");
-        setAdditional("");
-        store.makeEmpty();
-      } else {
-        toast({
-          title: "Error",
-          description: "Failed to create the tool.",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
-        // console.error("Failed to add document: ", result.error);
+    const checkEmpty = (arr) => {
+      for (let i = 0; i < arr.length; i++) {
+        if (arr[i] === "") {
+          return true;
+        }
       }
+      return false;
     };
 
-    const isFormValid = name && description;
+    if (!name || !description || checkEmpty(promptsArr)) {
+      toast({
+        title: "Error",
+        description: "Please fill out all Prompt fields.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
 
+    setIsCreating(true);
 
+    const result = await addSimpleTool({
+      additional,
+      creatorName: user?.displayName || "",
+      description,
+      img: "https://example.com/image.jpg",
+      prompts: promptsArr,
+      stars: 5,
+      status: true,
+      toolName: name,
+      type: inputType,
+      userId: user?.uid || "",
+    });
+
+    setIsCreating(false);
+
+    if (result.success) {
+      toast({
+        title: "Success",
+        description: "Tool created successfully.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      // console.log("Document added with ID: ", result.id);
+
+      if (result.id) {
+        setCreatedToolId(result.id);
+        onOpen();
+      }
+
+      setName("");
+      setDescription("");
+      setAdditional("");
+      store.makeEmpty();
+    } else {
+      toast({
+        title: "Error",
+        description: "Failed to create the tool.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+      // console.error("Failed to add document: ", result.error);
+    }
+  };
+
+  const handleUseTool = () => {
+    router.push(`/tool?toolID=/${createdToolId}`); 
+  };
+
+  const isFormValid = name && description;
 
   return (
     <Box position="relative" overflow="hidden" p={{ base: 4, md: 8 }}>
       <BackgroundGradient height={400} zIndex="-1" />
-      <Container maxW="container.xl" mt={10} p={4}>
+      <Container maxW="container.xl" mt={12} p={4}>
         <Flex justifyContent="space-between" mb={4} alignItems="center">
           <Heading size="md">Tool Details</Heading>
           <Flex alignItems="center">
@@ -288,6 +310,7 @@ const CreateTool: NextPage = ({ user }: any) => {
             orientation="vertical"
             display={{ base: "none", md: "block" }}
           />
+
           <Box
             width={{ base: "100%", md: "70%" }}
             padding={2}
@@ -332,8 +355,29 @@ const CreateTool: NextPage = ({ user }: any) => {
           </Box>
         </Flex>
       </Container>
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Tool Created Successfully</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text>Your tool has been created successfully!</Text>
+            <Button mt={4} colorScheme="purple" onClick={handleUseTool}>
+              Use Tool
+            </Button>
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="ghost" onClick={onClose}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 };
 
 export default isAuth(CreateTool);
+
+

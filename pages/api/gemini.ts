@@ -1,19 +1,29 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { GenerateTextOutput } from 'utils/gemini';
+
 type Data = {
   name: string
 }
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
-    const { prompt, input, type } = req.body;
+    const { prompt, input, type, imgUrl } = req.body;
 
-    if (!prompt || !input || !type) {
+    if (!prompt || !type) {
       console.log("input all content....");
       return res.status(400).json({ error: 'Prompt and input are required' });
     }
+    if(type === "text" && !input){
+      return res.status(400).json({ error: 'input is required' });
+    }
+    if(type === "img" && !imgUrl){
+      return res.status(400).json({ error: 'imgUrl is required' });
+    }
+    if(type === "both" && (!input || !imgUrl)){
+      return res.status(400).json({ error: 'input and imgUrl are required' });
+    }
     console.log(prompt, input, type);
-    const output = await GenerateTextOutput(prompt, input, type);
+    const output = await GenerateTextOutput(prompt, input, type, imgUrl);
     console.log("output"+output);
     res.status(200).json({ content:output });
   } else {

@@ -87,7 +87,7 @@ function ToolBoxProfile({ highlight, index }) {
             isChecked={status}
             onChange={() => {
                 togglePublicPrivate(highlight.id, status);
-                setStatus(prev => !prev
+                setStatus(prev => !prev);
             }}
             colorScheme="green"
           />

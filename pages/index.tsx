@@ -23,16 +23,6 @@ import {
   Input,
   InputGroup,
   InputRightElement,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  useDisclosure,
-  useClipboard,
-  useToast,
 } from "@chakra-ui/react";
 import { SEO } from "components/seo/seo";
 import { BackgroundGradient } from "components/gradients/background-gradient";
@@ -252,3 +242,9 @@ const HighlightsSection = ({ tools }: any) => {
 };
 
 export default Home;
+
+
+
+
+
+

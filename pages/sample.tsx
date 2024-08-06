@@ -42,7 +42,7 @@ import { GetAllData, saveTool } from "utils/firestore";
 import { requestPermission } from "utils/firebase-messaging";
 import { MdVerified } from "react-icons/md";
 
-const Home: NextPage = () => {
+const SimpleTool: NextPage = () => {
   const [tools, setTools] = React.useState<any[]>([]);
   const [filteredTools, setFilteredTools] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -384,5 +384,5 @@ const HighlightsSection = ({ tools }: any) => {
   );
 };
 
-export default Home;
+export default SimpleTool;
 

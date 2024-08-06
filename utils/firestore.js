@@ -10,20 +10,29 @@ import {
   getDocs,
   getDoc,
   increment,
-  orderBy,  
+  orderBy,
 } from "firebase/firestore";
 import { useCollection, useDocument } from "react-firebase-hooks/firestore";
-
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 const db = getFirestore(app);
 
 export const GetAllData = async (filter = "stars") => {
   try {
-    const q = query(collection(db, "data"), orderBy(filter, "desc"));
+    // Create a query against the collection
+    // Filter for status == true and order by the specified filter
+    const q = query(
+      collection(db, "data"),
+      where("status", "==", true),
+      orderBy(filter, "desc")
+    );
+
     const querySnapshot = await getDocs(q);
+
     let arr = [];
     querySnapshot.forEach((doc) => {
       arr.push({ ...doc.data(), id: doc.id });
     });
+
     return arr;
   } catch (error) {
     console.error("Error fetching data: ", error);
@@ -153,6 +162,78 @@ export const updateStars = async (toolId, incrementBy = 1) => {
     return {
       success: false,
       message: error.message,
+    };
+  }
+};
+
+export const uploadImageToFirebase = async (file) => {
+  try {
+    const storage = getStorage(app);
+    const filename = `${Date.now()}_${file.name}`;
+    const storageRef = ref(storage, `images/${filename}`);
+    const snapshot = await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(snapshot.ref);
+
+    return {
+      success: true,
+      url: downloadURL,
+      filename: filename,
+    };
+  } catch (error) {
+    console.error("Error uploading image: ", error);
+    return {
+      success: false,
+      error: error.message,
+    };
+  }
+};
+
+export const updateToolDocument = async (documentId, updateData) => {
+  try {
+    const docRef = doc(db, "data", documentId);
+    await updateDoc(docRef, {
+      ...updateData,
+      updatedAt: new Date(), // Adding a timestamp for when the document was last updated
+    });
+
+    return {
+      success: true,
+      message: "Document updated successfully",
+      error: null,
+    };
+  } catch (error) {
+    console.error("Error updating document: ", error);
+    return {
+      success: false,
+      message: "Failed to update document",
+      error: error.message,
+    };
+  }
+};
+
+export const updateToolStatus = async (documentId, newStatus) => {
+  try {
+    // Ensure newStatus is a boolean
+    const status = Boolean(newStatus);
+
+    const docRef = doc(db, "data", documentId);
+
+    await updateDoc(docRef, {
+      status: status,
+      updatedAt: new Date(), // Adding a timestamp for when the document was last updated
+    });
+
+    return {
+      success: true,
+      message: `Tool status updated to ${status}`,
+      error: null,
+    };
+  } catch (error) {
+    console.error("Error updating tool status: ", error);
+    return {
+      success: false,
+      message: "Failed to update tool status",
+      error: error.message,
     };
   }
 };
