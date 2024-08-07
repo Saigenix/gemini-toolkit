@@ -46,6 +46,7 @@ import { auth } from "../utils/Auth";
 import { MdVerified } from "react-icons/md";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useEffect, useRef } from "react";
+import ChatbotModal from "components/chatbox";
 
 const Home: NextPage = () => {
   const [user, loginLoading, error] = useAuthState(auth);
@@ -163,7 +164,7 @@ const Home: NextPage = () => {
           size="lg"
           onClick={onOpen}
         />
-        <ChatbotModal isOpen={isOpen} onClose={onClose} />
+        {user && <ChatbotModal isOpen={isOpen} onClose={onClose} />}
       </Box>
     </Box>
   );
@@ -256,127 +257,5 @@ const HighlightsSection = ({ tools }: any) => {
   );
 };
 
-const ChatbotModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
-  isOpen,
-  onClose,
-}) => {
-  const [messages, setMessages] = React.useState<
-    { user: string; bot: string }[]
-  >([]);
-  const [inputValue, setInputValue] = React.useState("");
-
-  const sendMessage = async (message: string) => {
-    const newMessages = [...messages, { user: message, bot: "" }];
-    setMessages(newMessages);
-    setInputValue("");
-
-    setTimeout(() => {
-      const botResponse = "This is a mock response from the chatbot.";
-      setMessages([...newMessages, { user: message, bot: botResponse }]);
-    }, 1000);
-  };
-
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages]);
-
-  const circularMotion = keyframes`
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-`;
-
-  return (
-    <Modal isOpen={isOpen} onClose={onClose} size="md" isCentered>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Chat with Gemini Toolkit</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody maxHeight="400px" overflowY="auto">
-          <VStack spacing={3} align="stretch">
-            {messages.map((msg, index) => (
-              <Box key={index} w="100%">
-                <Box display="flex" alignItems="center">
-                  <Box
-                    as="img"
-                    src={userLogo.src}
-                    alt="Gemini Logo"
-                    boxSize="1.6rem"
-                  />
-                  <Text padding={2} fontWeight="bold">
-                    You
-                  </Text>
-                </Box>
-                <Box
-                  mb={2}
-                  ml="30px"
-                  bg="white"
-                  p={2}
-                  borderRadius="15px"
-                  boxShadow="lg"
-                >
-                  <Text color="black">{msg.user}</Text>
-                </Box>
-                {msg.bot && (
-                  <>
-                    <Box display="flex" alignItems="center">
-                      <Box
-                        as="img"
-                        src={geminiLogo.src}
-                        alt="Gemini Logo"
-                        boxSize="1.6rem"
-                        css={css`
-                          animation: ${circularMotion} 4s linear infinite;
-                          filter: saturate(2);
-                        `}
-                      />
-                      <Text padding={2} fontWeight="bold">
-                        Gemini
-                      </Text>
-                    </Box>
-                    <Box
-                      mb={2}
-                      ml="30px"
-                      bg="#6F61C0"
-                      p={2}
-                      borderRadius="15px"
-                      boxShadow="lg"
-                    >
-                      <Text color="white">{msg.bot}</Text>
-                    </Box>
-                  </>
-                )}
-              </Box>
-            ))}
-            <div ref={messagesEndRef} />
-            <Flex mt={4}>
-              <Input
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Type your message..."
-              />
-              <Button
-                bg={"#6F61C0"}
-                ml={2}
-                color="white"
-                onClick={() => sendMessage(inputValue)}
-              >
-                Send
-              </Button>
-            </Flex>
-          </VStack>
-        </ModalBody>
-        <ModalFooter></ModalFooter>
-      </ModalContent>
-    </Modal>
-  );
-};
 
 export default Home;

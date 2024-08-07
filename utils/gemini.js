@@ -77,3 +77,12 @@ export async function logToFile(message) {
     console.error("Error writing to log file:", error);
   }
 }
+
+export async function chatWithGemini(chatHistory,message) {
+  // The Gemini 1.5 models are versatile and work with multi-turn conversations (like chat)
+  const chat = model.startChat(chatHistory);
+  const result = await chat.sendMessage(message);
+  const response = await result.response;
+  const text = response.text();
+  return text;
+}
