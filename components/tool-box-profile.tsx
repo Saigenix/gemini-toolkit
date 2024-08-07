@@ -21,6 +21,7 @@ import {
   Flex,
   Spinner,
   Center,
+  Divider,
   useDisclosure,
   useClipboard,
   useToast,
@@ -28,6 +29,7 @@ import {
 import { updateToolStatus } from "utils/firestore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import OtherOptions from "./other-options";
+import { ButtonLink } from "components/button-link/button-link";
 import { set } from "date-fns";
 function ToolBoxProfile({ highlight, index }) {
   const toast = useToast();
@@ -78,16 +80,38 @@ function ToolBoxProfile({ highlight, index }) {
               {highlight.description}
             </Text>
           </Box>
+          <Flex justifyContent="space-between" alignItems="center" mt={3}>
+            <ButtonGroup spacing={3} alignItems="center">
+              <ButtonLink
+                marginTop={2}
+                colorScheme="primary"
+                fontSize="1.2rem"
+                width={110}
+                height={45}
+                href={`/tool?toolID=${highlight.id}`}
+              >
+                Use{" "}
+                <FontAwesomeIcon
+                  style={{ marginLeft: "0.5rem" }}
+                  icon={faArrowUpRightFromSquare}
+                />
+              </ButtonLink>
+            </ButtonGroup>
+          </Flex>
         </Flex>
-        <OtherOptions toolId={highlight.id} stars={highlight.stars} />
-        <Flex mt={3} alignItems="center">
-          <Text paddingLeft={8}>{highlight.status ? "Public" : "Private"}</Text>
+        <Divider my={8} mb={1} borderColor="purple.500" borderWidth="2px" />
+        <Flex alignItems="center">
+          <OtherOptions toolId={highlight.id} stars={highlight.stars} />
+          <Text marginTop={10} paddingLeft={5}>
+            {highlight.status ? "Public" : "Private"}
+          </Text>
           <Switch
+            marginTop={10}
             paddingLeft={2}
             isChecked={status}
             onChange={() => {
-                togglePublicPrivate(highlight.id, status);
-                setStatus(prev => !prev);
+              togglePublicPrivate(highlight.id, status);
+              setStatus((prev) => !prev);
             }}
             colorScheme="green"
           />
@@ -99,3 +123,5 @@ function ToolBoxProfile({ highlight, index }) {
 }
 
 export default ToolBoxProfile;
+
+

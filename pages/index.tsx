@@ -2,20 +2,25 @@
 import * as React from "react";
 import type { NextPage } from "next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
+import {
+  faArrowUpRightFromSquare,
+  faCommentDots,
+  faUser,
+  faRobot,
+} from "@fortawesome/free-solid-svg-icons";
 import OtherOptions from "components/other-options";
 import { css, keyframes } from "@emotion/react";
 import geminiLogo from "../public/static/images/gemini.png";
+import userLogo from "../public/static/images/profile.png";
 import { useRouter } from "next/router";
 import {
   Container,
   Box,
   ButtonGroup,
   Button,
-  Icon,
+  IconButton,
   Heading,
   Text,
-  IconButton,
   VStack,
   Flex,
   Spinner,
@@ -23,16 +28,25 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
 } from "@chakra-ui/react";
 import { SEO } from "components/seo/seo";
 import { BackgroundGradient } from "components/gradients/background-gradient";
 import { ButtonLink } from "components/button-link/button-link";
 import { Highlights, HighlightsItem } from "components/highlights";
-import { GetAllData, saveTool,updateStars } from "utils/firestore";
-import { requestPermission } from "utils/firebase-messaging";
+import { GetAllData, saveTool, updateStars } from "utils/firestore";
+import { auth } from "../utils/Auth";
 import { MdVerified } from "react-icons/md";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../utils/Auth";
+import { useEffect, useRef } from "react";
+import ChatbotModal from "components/chatbox";
 
 const Home: NextPage = () => {
   const [user, loginLoading, error] = useAuthState(auth);
@@ -41,15 +55,14 @@ const Home: NextPage = () => {
   const [loading, setLoading] = React.useState(true);
   const [searchTerm, setSearchTerm] = React.useState("");
   const router = useRouter();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   React.useEffect(() => {
     GetAllData().then((data) => {
-      console.log(data);
       setTools(data);
       setFilteredTools(data);
       setLoading(false);
     });
-    // requestPermission();
   }, []);
 
   const handleClick = () => {
@@ -74,19 +87,19 @@ const Home: NextPage = () => {
   };
 
   const glowing = keyframes`
-  0% {
-    border-color: #805AD5;
-    box-shadow: 0 0 1px #805AD5;
-  }
-  50% {
-    border-color: #B794F4;
-    box-shadow: 0 0 10px #B794F4;
-  }
-  100% {
-    border-color: #805AD5;
-    box-shadow: 0 0 1px #805AD5;
-  }
-`;
+    0% {
+      border-color: #805AD5;
+      box-shadow: 0 0 1px #805AD5;
+    }
+    50% {
+      border-color: #B794F4;
+      box-shadow: 0 0 10px #B794F4;
+    }
+    100% {
+      border-color: #805AD5;
+      box-shadow: 0 0 1px #805AD5;
+    }
+  `;
 
   return (
     <Box>
@@ -102,9 +115,7 @@ const Home: NextPage = () => {
             borderRadius="full"
             borderColor="purple.500"
             boxShadow="md"
-            sx={{
-              animation: `${glowing} 2s infinite`,
-            }}
+            sx={{ animation: `${glowing} 2s infinite` }}
           >
             <Input
               pr="4.5rem"
@@ -122,15 +133,10 @@ const Home: NextPage = () => {
             color="white"
             cursor="pointer"
             bgGradient="linear(to-r, blue.500, purple.500)"
-            _hover={{
-              bgGradient: "linear(to-r, blue.600, purple.600)",
-            }}
+            _hover={{ bgGradient: "linear(to-r, blue.600, purple.600)" }}
             borderRadius="full"
             onClick={handleClick}
             size="lg"
-            // sx={{
-            //   animation: `${glowing} 2s infinite`,
-            // }}
           >
             Create Tool
           </Button>
@@ -147,6 +153,18 @@ const Home: NextPage = () => {
           </Center>
         ) : null}
         <HighlightsSection tools={filteredTools} />
+        <IconButton
+          aria-label="Chatbot"
+          icon={<FontAwesomeIcon icon={faCommentDots} />}
+          position="fixed"
+          bottom="40px"
+          right="20px"
+          colorScheme="purple"
+          borderRadius="full"
+          size="lg"
+          onClick={onOpen}
+        />
+        {user && <ChatbotModal isOpen={isOpen} onClose={onClose} />}
       </Box>
     </Box>
   );
@@ -167,13 +185,13 @@ const ExploreTools: React.FC = () => {
 
 const HighlightsSection = ({ tools }: any) => {
   const circularMotion = keyframes`
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-`;
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  `;
 
   return (
     <Highlights paddingTop={10}>
@@ -235,16 +253,9 @@ const HighlightsSection = ({ tools }: any) => {
           <OtherOptions toolId={highlight.id} stars={highlight.stars} />
         </HighlightsItem>
       ))}
-
-
     </Highlights>
   );
 };
 
+
 export default Home;
-
-
-
-
-
-

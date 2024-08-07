@@ -38,7 +38,7 @@ import { useState, useEffect } from "react";
 import { getDocumentsByUserId, updateToolStatus } from "utils/firestore";
 import { useRouter } from "next/router";
 import { GetAllData, saveTool } from "utils/firestore";
-import { id } from "date-fns/locale";
+// import { id } from "date-fns/locale";
 import ToolBoxProfile from "components/tool-box-profile";
 const Profile: NextPage = () => {
   const [user, loading, error] = useAuthState(auth);
@@ -69,7 +69,7 @@ const Profile: NextPage = () => {
 
   return (
     <Box>
-      <SEO title="NexAI" description="Next Generation AI" />
+      <SEO title="Gemini Toolkit" description="Next Generation AI" />
       <Box display={{ base: "block", md: "flex" }}>
         <Box
           flex={{ base: "none", md: "1" }}
