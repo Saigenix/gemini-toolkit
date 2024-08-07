@@ -38,13 +38,14 @@ const ChatbotModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   const [inputValue, setInputValue] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const toast = useToast();
-   const onKeyDownHandler = (e) => {
 
-      if (e.keyCode === 13) {
-        e.preventDefault();
-        sendMessage(inputValue);
-      }
-    };
+  const onKeyDownHandler = (e) => {
+    if (e.keyCode === 13) {
+      e.preventDefault();
+      sendMessage(inputValue);
+    }
+  };
+
   async function generateChatGemini(chatHistory, message) {
     setMessages((prev) => [
       ...prev,
@@ -57,7 +58,6 @@ const ChatbotModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
         parts: [{ text: "loading..." }],
       },
     ]);
-    // console.log(chatHistory);
     try {
       const response = await fetch("/api/geminichat", {
         method: "POST",
@@ -89,21 +89,6 @@ const ChatbotModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
       });
     }
   }
-  //   const chatHistory = {
-  //     history: [
-  //       {
-  //         role: "user",
-  //         parts: [{ text: "Hello, I have 2 dogs in my house." }],
-  //       },
-  //       {
-  //         role: "model",
-  //         parts: [{ text: "Great to meet you. What would you like to know?" }],
-  //       },
-  //     ],
-  //     generationConfig: {
-  //       maxOutputTokens: 500,
-  //     },
-  //   };
 
   const sendMessage = async (message: string) => {
     const chatHistory = {
@@ -123,13 +108,19 @@ const ChatbotModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   }, [messages]);
 
   const circularMotion = keyframes`
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-`;
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  `;
+
+  const preQuestions = [
+    "How are you ?",
+    "How to use tool ?",
+    "How to create tool ?",
+  ];
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="md" isCentered>
@@ -139,6 +130,22 @@ const ChatbotModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
         <ModalCloseButton />
         <ModalBody maxHeight="400px" overflowY="auto">
           <VStack spacing={3} align="stretch">
+            {preQuestions.map((question, index) => (
+              <Box
+                key={index}
+                as="button"
+                w="50%"
+                bg="#373A40"
+                border="0.5px solid #F5F7F8"
+                p={2}
+                borderRadius="md"
+                boxShadow="sm"
+                textAlign="left"
+                onClick={() => setInputValue(question)}
+              >
+                <Text color="white">{question}</Text>
+              </Box>
+            ))}
             {messages.map((msg, index) => (
               <Box key={index} w="100%">
                 {msg.role === "user" && (
@@ -147,7 +154,7 @@ const ChatbotModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
                       <Box
                         as="img"
                         src={userLogo.src}
-                        alt="Gemini Logo"
+                        alt="User Logo"
                         boxSize="1.6rem"
                       />
                       <Text padding={2} fontWeight="bold">
@@ -210,7 +217,6 @@ const ChatbotModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
                 bg={"#6F61C0"}
                 ml={2}
                 color="white"
-
                 onClick={() => sendMessage(inputValue)}
               >
                 Send
