@@ -73,7 +73,7 @@ const SignUp: NextPage = () => {
               }))}
             />
           </Box>
-          <Center height="100%" flex="1" mt={{ base: 0, lg: 20 }}>
+          <Center height="100%" flex="1">
             <Box
               width="100%"
               maxW="container.sm"

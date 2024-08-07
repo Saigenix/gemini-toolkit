@@ -72,7 +72,7 @@ const Navigation: React.FC = () => {
         } else {
           return (
             <NavLink
-              display={["none", null, "block"]}
+              display={["block", null, "block"]}
               href={href || `/#${id}`}
               key={i}
               isActive={
@@ -117,7 +117,7 @@ const Navigation: React.FC = () => {
             >
               <Box
                 as="img"
-                src="/static/images/gemini.png" 
+                src="/static/images/gemini.png"
                 alt="Website Logo"
                 borderRadius="full"
                 width="40px"
@@ -137,6 +137,7 @@ const Navigation: React.FC = () => {
       )}
 
       <ThemeToggle />
+
       {user && (
         <Menu>
           <MenuButton
@@ -171,15 +172,18 @@ const Navigation: React.FC = () => {
           </MenuList>
         </Menu>
       )}
-      <MobileNavButton
+
+      {/* <MobileNavButton
         ref={mobileNavBtnRef}
         aria-label="Open Menu"
         onClick={mobileNav.onOpen}
-      />
+      /> */}
 
-      <MobileNavContent isOpen={mobileNav.isOpen} onClose={mobileNav.onClose} />
+      {/* <MobileNavContent isOpen={mobileNav.isOpen} onClose={mobileNav.onClose} /> */}
+
     </HStack>
   );
 };
 
 export default Navigation;
+

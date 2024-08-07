@@ -2,25 +2,20 @@
 import * as React from "react";
 import type { NextPage } from "next";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faArrowUpRightFromSquare,
-  faCommentDots,
-  faUser,
-  faRobot,
-} from "@fortawesome/free-solid-svg-icons";
+import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
 import OtherOptions from "components/other-options";
 import { css, keyframes } from "@emotion/react";
 import geminiLogo from "../public/static/images/gemini.png";
-import userLogo from "../public/static/images/profile.png";
 import { useRouter } from "next/router";
 import {
   Container,
   Box,
   ButtonGroup,
   Button,
-  IconButton,
+  Icon,
   Heading,
   Text,
+  IconButton,
   VStack,
   Flex,
   Spinner,
@@ -28,24 +23,16 @@ import {
   Input,
   InputGroup,
   InputRightElement,
-  useDisclosure,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
 } from "@chakra-ui/react";
 import { SEO } from "components/seo/seo";
 import { BackgroundGradient } from "components/gradients/background-gradient";
 import { ButtonLink } from "components/button-link/button-link";
 import { Highlights, HighlightsItem } from "components/highlights";
-import { GetAllData, saveTool, updateStars } from "utils/firestore";
-import { auth } from "../utils/Auth";
+import { GetAllData, saveTool,updateStars } from "utils/firestore";
+import { requestPermission } from "utils/firebase-messaging";
 import { MdVerified } from "react-icons/md";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useEffect, useRef } from "react";
+import { auth } from "../utils/Auth";
 
 const Home: NextPage = () => {
   const [user, loginLoading, error] = useAuthState(auth);
@@ -54,14 +41,15 @@ const Home: NextPage = () => {
   const [loading, setLoading] = React.useState(true);
   const [searchTerm, setSearchTerm] = React.useState("");
   const router = useRouter();
-  const { isOpen, onOpen, onClose } = useDisclosure();
 
   React.useEffect(() => {
     GetAllData().then((data) => {
+      console.log(data);
       setTools(data);
       setFilteredTools(data);
       setLoading(false);
     });
+    // requestPermission();
   }, []);
 
   const handleClick = () => {
@@ -86,19 +74,19 @@ const Home: NextPage = () => {
   };
 
   const glowing = keyframes`
-    0% {
-      border-color: #805AD5;
-      box-shadow: 0 0 1px #805AD5;
-    }
-    50% {
-      border-color: #B794F4;
-      box-shadow: 0 0 10px #B794F4;
-    }
-    100% {
-      border-color: #805AD5;
-      box-shadow: 0 0 1px #805AD5;
-    }
-  `;
+  0% {
+    border-color: #805AD5;
+    box-shadow: 0 0 1px #805AD5;
+  }
+  50% {
+    border-color: #B794F4;
+    box-shadow: 0 0 10px #B794F4;
+  }
+  100% {
+    border-color: #805AD5;
+    box-shadow: 0 0 1px #805AD5;
+  }
+`;
 
   return (
     <Box>
@@ -114,7 +102,9 @@ const Home: NextPage = () => {
             borderRadius="full"
             borderColor="purple.500"
             boxShadow="md"
-            sx={{ animation: `${glowing} 2s infinite` }}
+            sx={{
+              animation: `${glowing} 2s infinite`,
+            }}
           >
             <Input
               pr="4.5rem"
@@ -132,10 +122,15 @@ const Home: NextPage = () => {
             color="white"
             cursor="pointer"
             bgGradient="linear(to-r, blue.500, purple.500)"
-            _hover={{ bgGradient: "linear(to-r, blue.600, purple.600)" }}
+            _hover={{
+              bgGradient: "linear(to-r, blue.600, purple.600)",
+            }}
             borderRadius="full"
             onClick={handleClick}
             size="lg"
+            // sx={{
+            //   animation: `${glowing} 2s infinite`,
+            // }}
           >
             Create Tool
           </Button>
@@ -152,18 +147,6 @@ const Home: NextPage = () => {
           </Center>
         ) : null}
         <HighlightsSection tools={filteredTools} />
-        <IconButton
-          aria-label="Chatbot"
-          icon={<FontAwesomeIcon icon={faCommentDots} />}
-          position="fixed"
-          bottom="40px"
-          right="20px"
-          colorScheme="purple"
-          borderRadius="full"
-          size="lg"
-          onClick={onOpen}
-        />
-        <ChatbotModal isOpen={isOpen} onClose={onClose} />
       </Box>
     </Box>
   );
@@ -184,13 +167,13 @@ const ExploreTools: React.FC = () => {
 
 const HighlightsSection = ({ tools }: any) => {
   const circularMotion = keyframes`
-    0% {
-      transform: rotate(0deg);
-    }
-    100% {
-      transform: rotate(360deg);
-    }
-  `;
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+`;
 
   return (
     <Highlights paddingTop={10}>
@@ -253,129 +236,6 @@ const HighlightsSection = ({ tools }: any) => {
         </HighlightsItem>
       ))}
     </Highlights>
-  );
-};
-
-const ChatbotModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
-  isOpen,
-  onClose,
-}) => {
-  const [messages, setMessages] = React.useState<
-    { user: string; bot: string }[]
-  >([]);
-  const [inputValue, setInputValue] = React.useState("");
-
-  const sendMessage = async (message: string) => {
-    const newMessages = [...messages, { user: message, bot: "" }];
-    setMessages(newMessages);
-    setInputValue("");
-
-    setTimeout(() => {
-      const botResponse = "This is a mock response from the chatbot.";
-      setMessages([...newMessages, { user: message, bot: botResponse }]);
-    }, 1000);
-  };
-
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages]);
-
-  const circularMotion = keyframes`
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-`;
-
-  return (
-    <Modal isOpen={isOpen} onClose={onClose} size="md" isCentered>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Chat with Gemini Toolkit</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody maxHeight="400px" overflowY="auto">
-          <VStack spacing={3} align="stretch">
-            {messages.map((msg, index) => (
-              <Box key={index} w="100%">
-                <Box display="flex" alignItems="center">
-                  <Box
-                    as="img"
-                    src={userLogo.src}
-                    alt="Gemini Logo"
-                    boxSize="1.6rem"
-                  />
-                  <Text padding={2} fontWeight="bold">
-                    You
-                  </Text>
-                </Box>
-                <Box
-                  mb={2}
-                  ml="30px"
-                  bg="white"
-                  p={2}
-                  borderRadius="15px"
-                  boxShadow="lg"
-                >
-                  <Text color="black">{msg.user}</Text>
-                </Box>
-                {msg.bot && (
-                  <>
-                    <Box display="flex" alignItems="center">
-                      <Box
-                        as="img"
-                        src={geminiLogo.src}
-                        alt="Gemini Logo"
-                        boxSize="1.6rem"
-                        css={css`
-                          animation: ${circularMotion} 4s linear infinite;
-                          filter: saturate(2);
-                        `}
-                      />
-                      <Text padding={2} fontWeight="bold">
-                        Gemini
-                      </Text>
-                    </Box>
-                    <Box
-                      mb={2}
-                      ml="30px"
-                      bg="#6F61C0"
-                      p={2}
-                      borderRadius="15px"
-                      boxShadow="lg"
-                    >
-                      <Text color="white">{msg.bot}</Text>
-                    </Box>
-                  </>
-                )}
-              </Box>
-            ))}
-            <div ref={messagesEndRef} />
-            <Flex mt={4}>
-              <Input
-                value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Type your message..."
-              />
-              <Button
-                bg={"#6F61C0"}
-                ml={2}
-                color="white"
-                onClick={() => sendMessage(inputValue)}
-              >
-                Send
-              </Button>
-            </Flex>
-          </VStack>
-        </ModalBody>
-        <ModalFooter></ModalFooter>
-      </ModalContent>
-    </Modal>
   );
 };
 
