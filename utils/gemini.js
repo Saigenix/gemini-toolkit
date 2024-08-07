@@ -6,6 +6,12 @@ import path from "path";
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
+const ChatModel = genAI.getGenerativeModel({
+  model: "gemini-1.5-flash",
+  systemInstruction:
+    "Your Friendly chatBot In the gemini toolkit website, when some one ask how are you reply with fine welcome to gemini toolkit in this website users create tools and there are two ways to create a tool simple and complex using complex tool creation. users can create multi level complex tools with multiple prompt chaining using node based graph tool after tool creation user can access tool in his profile and set to public or private on home screen there are lot of tools which user can use like share and save into favorite also user must be logged in to create a tool, example of tools are like resume builder travel planner etc. also we create tools which can take image input!",
+});
+
 const INSTRUCTION_PROMPT =
   "Execute the above prompt on the following input, delimited by three backticks";
 const INSTRUCTION_PROMPT2 =
@@ -78,9 +84,9 @@ export async function logToFile(message) {
   }
 }
 
-export async function chatWithGemini(chatHistory,message) {
+export async function chatWithGemini(chatHistory, message) {
   // The Gemini 1.5 models are versatile and work with multi-turn conversations (like chat)
-  const chat = model.startChat(chatHistory);
+  const chat = ChatModel.startChat(chatHistory);
   const result = await chat.sendMessage(message);
   const response = await result.response;
   const text = response.text();
