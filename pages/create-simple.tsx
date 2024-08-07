@@ -13,6 +13,15 @@ import {
   Radio,
   RadioGroup,
   Stack,
+  Modal,
+  ModalBody,
+  ModalHeader,
+  ModalFooter,
+  ModalCloseButton,
+  ModalOverlay,
+  ModalContent,
+  useDisclosure,
+  Text,
   Textarea,
   Tooltip,
   useToast,
@@ -23,8 +32,11 @@ import { BackgroundGradient } from "components/gradients/background-gradient";
 import { SEO } from "components/seo/seo";
 import { addSimpleTool } from "utils/firestore";
 import isAuth from "hooks/isAuth";
-const CreateSimple: React.FC = ({user}:any) => {
+import { useRouter } from "next/router";
+
+const CreateSimple: React.FC = ({ user }: any) => {
   const toast = useToast();
+  const router = useRouter();
   const [type, setType] = useState("text");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -32,6 +44,8 @@ const CreateSimple: React.FC = ({user}:any) => {
   const [additional, setAdditional] = useState("");
   const [isCreating, setIsCreating] = useState(false);
 
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [createdToolId, setCreatedToolId] = useState("");
 
   const handleSubmit = async () => {
     if (!name || !description || !prompt) {
@@ -72,6 +86,11 @@ const CreateSimple: React.FC = ({user}:any) => {
       });
       console.log("Document added with ID: ", result.id);
 
+      if (result.id) {
+        setCreatedToolId(result.id);
+        onOpen();
+      }
+
       setName("");
       setDescription("");
       setPrompt("");
@@ -87,6 +106,11 @@ const CreateSimple: React.FC = ({user}:any) => {
       });
       console.error("Failed to add document: ", result.error);
     }
+  };
+
+
+  const handleUseTool = () => {
+    router.push(`/tool?toolID=/${createdToolId}`); 
   };
 
   const isFormValid = name && description && prompt;
@@ -215,8 +239,28 @@ const CreateSimple: React.FC = ({user}:any) => {
           </Button>
         </Box>
       </Container>
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Tool Created Successfully</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text>Your tool has been created successfully!</Text>
+            <Button mt={4} colorScheme="purple" onClick={handleUseTool}>
+              Use Tool
+            </Button>
+          </ModalBody>
+          <ModalFooter>
+            <Button variant="ghost" onClick={onClose}>
+              Close
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 };
 
 export default isAuth(CreateSimple);
+

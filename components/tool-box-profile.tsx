@@ -21,6 +21,7 @@ import {
   Flex,
   Spinner,
   Center,
+  Divider,
   useDisclosure,
   useClipboard,
   useToast,
@@ -98,7 +99,8 @@ function ToolBoxProfile({ highlight, index }) {
             </ButtonGroup>
           </Flex>
         </Flex>
-        <Flex mt={3} alignItems="center">
+        <Divider my={8} mb={1} borderColor="purple.500" borderWidth="2px" />
+        <Flex alignItems="center">
           <OtherOptions toolId={highlight.id} stars={highlight.stars} />
           <Text marginTop={10} paddingLeft={5}>
             {highlight.status ? "Public" : "Private"}
@@ -121,3 +123,5 @@ function ToolBoxProfile({ highlight, index }) {
 }
 
 export default ToolBoxProfile;
+
+

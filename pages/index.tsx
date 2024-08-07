@@ -380,5 +380,3 @@ const ChatbotModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
 };
 
 export default Home;
-
-
