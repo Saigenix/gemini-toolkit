@@ -1,4 +1,5 @@
 import * as React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   HStack,
   Box,
@@ -16,6 +17,7 @@ import {
   keyframes,
   Text,
 } from "@chakra-ui/react";
+import { faCommentDots } from "@fortawesome/free-solid-svg-icons";
 import { useRouter } from "next/router";
 import siteConfig from "data/config";
 import { BellIcon } from "@chakra-ui/icons";
@@ -28,6 +30,7 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "utils/Auth";
 import ThemeToggle from "./theme-toggle";
 import { FiMoreVertical } from "react-icons/fi";
+import ChatbotModal from "components/chatbox";
 
 const spin = keyframes`
   from { transform: rotate(0deg); }
@@ -37,6 +40,8 @@ const spin = keyframes`
 const Navigation: React.FC = () => {
   const mobileNav = useDisclosure();
   const router = useRouter();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const activeId = useScrollSpy(
     siteConfig.header.links
       .filter(({ id }) => id)
@@ -65,7 +70,7 @@ const Navigation: React.FC = () => {
   const showNotificationBell = useBreakpointValue({ base: false, md: true });
 
   return (
-    <HStack spacing="2" flexShrink={0} position="relative">
+    <HStack marginRight={10} spacing="2" flexShrink={0} position="relative">
       {siteConfig.header.links.map(({ href, id, ...props }, i) => {
         if (href === "/signup" && user) {
           return null;
@@ -91,6 +96,15 @@ const Navigation: React.FC = () => {
 
       {showNotificationBell && (
         <>
+          <IconButton
+            aria-label="Chatbot"
+            icon={<FontAwesomeIcon icon={faCommentDots} />}
+            colorScheme="green"
+            borderRadius="full"
+            size="sm"
+            onClick={onOpen}
+          />
+          {user && <ChatbotModal isOpen={isOpen} onClose={onClose} />}
           <IconButton
             aria-label="Notifications"
             icon={<BellIcon />}
@@ -180,10 +194,8 @@ const Navigation: React.FC = () => {
       /> */}
 
       {/* <MobileNavContent isOpen={mobileNav.isOpen} onClose={mobileNav.onClose} /> */}
-
     </HStack>
   );
 };
 
 export default Navigation;
-
