@@ -26,7 +26,7 @@ import {
 import { BsBookmarkPlus } from "react-icons/bs";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
-import { GetAllData } from "utils/firestore";
+import { getSavedTools,getDocumentsByToolIds } from "utils/firestore";
 import { SEO } from "components/seo/seo";
 import { BackgroundGradient } from "components/gradients/background-gradient";
 import { SlActionRedo } from "react-icons/sl";
@@ -34,16 +34,25 @@ import { ButtonLink } from "components/button-link/button-link";
 import { Highlights, HighlightsItem } from "components/highlights";
 import isAuth from "hooks/isAuth";
 
-const SavedTools: React.FC = () => {
+const SavedTools: React.FC = ({ user }: any) => {
   const [savedTools, setSavedTools] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
     const fetchSavedTools = async () => {
       try {
-        const data = await GetAllData();
-        console.log(data);
-        setSavedTools(data);
+        // console.log(user);
+        setLoading(true);
+        const data = await getSavedTools(user.uid);
+        // console.log(data);
+        if (data.savedTools) {
+          const tools = await getDocumentsByToolIds(data.savedTools);
+          // console.log(tools);
+          setSavedTools(tools.data || []);
+        }else{
+          setSavedTools([]);
+        }
+
       } catch (error) {
         console.error("Failed to fetch saved tools:", error);
       } finally {
@@ -52,29 +61,29 @@ const SavedTools: React.FC = () => {
     };
 
     fetchSavedTools();
-  }, []);
+  }, [user]);
 
   return (
     <Flex direction="column" minHeight="100vh">
-    <Box>
-      <SEO title="Saved Tools" description="Your saved AI tools" />
       <Box>
-        <ExploreTools />
-        {loading ? (
-          <Center height="100%" pt="20">
-            <Spinner
-              thickness="4px"
-              speed="0.65s"
-              emptyColor="gray.200"
-              color="blue.500"
-              size="xl"
-            />
-          </Center>
-        ) : (
-          <HighlightsSection tools={savedTools} />
-        )}
+        <SEO title="Saved Tools" description="Your saved AI tools" />
+        <Box>
+          <ExploreTools />
+          {loading ? (
+            <Center height="100%" pt="20">
+              <Spinner
+                thickness="4px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                color="blue.500"
+                size="xl"
+              />
+            </Center>
+          ) : (
+            <HighlightsSection tools={savedTools} />
+          )}
+        </Box>
       </Box>
-    </Box>
     </Flex>
   );
 };
@@ -152,7 +161,7 @@ const HighlightsSection = ({ tools }: { tools: any[] }) => {
                 marginRight="1.2rem"
                 onClick={() => handleShare(highlight.id)}
               />
-              <Icon as={BsBookmarkPlus} boxSize="1.2rem" marginRight="1.2rem" />
+              {/* <Icon as={BsBookmarkPlus} boxSize="1.2rem" marginRight="1.2rem" /> */}
             </Flex>
           </HighlightsItem>
         ))}
@@ -221,4 +230,3 @@ const HighlightsSection = ({ tools }: { tools: any[] }) => {
 };
 
 export default isAuth(SavedTools);
-
