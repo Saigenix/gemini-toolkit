@@ -29,7 +29,12 @@ import {
 import { SlActionRedo, SlHeart } from "react-icons/sl";
 import { BsBookmarkPlus, BsHeartFill, BsHeart } from "react-icons/bs";
 import { updateStars, saveTool } from "utils/firestore";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../utils/Auth";
+
+
 function OtherOptions({ toolId, stars }) {
+  const [user, loading, error] = useAuthState(auth);
   const [likes, setLikes] = React.useState(stars);
   const [saved, setSaved] = React.useState(false);
   const [shareToolId, setShareToolId] = React.useState<string | null>(null);
@@ -68,11 +73,10 @@ function OtherOptions({ toolId, stars }) {
   };
 
   const handleSave = async (toolId: string) => {
-    setSaved((prevSaved) => !prevSaved);
-
-    if (!saved) {
+    if (!saved && !loading && user) {
+      // console.log("saving");
       try {
-        // await saveTool(toolId);
+        await saveTool(user.uid,toolId);
         toast({
           title: "Tool saved successfully.",
           status: "success",
@@ -92,6 +96,7 @@ function OtherOptions({ toolId, stars }) {
         });
       }
     }
+    setSaved((prevSaved) => !prevSaved);
   };
   return (
     <>

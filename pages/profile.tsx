@@ -35,12 +35,13 @@ import { BackgroundGradient } from "components/gradients/background-gradient";
 import { ButtonLink } from "components/button-link/button-link";
 import { Highlights, HighlightsItem } from "components/highlights";
 import { useState, useEffect } from "react";
-import { getDocumentsByUserId, updateToolStatus } from "utils/firestore";
+import { getDocumentsByUserId, updateToolStatus, deleteTool } from "utils/firestore";
 import { useRouter } from "next/router";
 import { GetAllData, saveTool } from "utils/firestore";
 // import { id } from "date-fns/locale";
 import ToolBoxProfile from "components/tool-box-profile";
 const Profile: NextPage = () => {
+  const toast = useToast();
   const [user, loading, error] = useAuthState(auth);
   const [documents, setDocuments] = useState<any>([]);
   const [loading1, setLoading] = useState(false);
@@ -66,7 +67,30 @@ const Profile: NextPage = () => {
 
     fetchData();
   }, [user, loading]);
-
+ const HandleDelete = async (id: string) => {
+   try {
+     const result = await deleteTool(id);
+     if (result.success) {
+       setDocuments(documents.filter((doc) => doc.id !== id));
+       toast({
+         title: "Success",
+         description: `Tool deleted successfully`,
+         status: "success",
+         duration: 5000,
+         isClosable: true,
+       });
+     }
+   } catch (error) {
+     toast({
+       title: "Error",
+       description: `Failed to delete tool`,
+       status: "error",
+       duration: 5000,
+       isClosable: true,
+     });
+     console.error(error);
+   }
+ };
   return (
     <Box>
       <SEO title="Gemini Toolkit" description="Next Generation AI" />
@@ -89,7 +113,10 @@ const Profile: NextPage = () => {
               />
             </Center>
           ) : (
-            <HighlightsSection highlightsData={documents} />
+            <HighlightsSection
+              highlightsData={documents}
+              HandleDelete={HandleDelete}
+            />
           )}
         </Box>
       </Box>
@@ -132,7 +159,7 @@ const ExploreTools = ({ displayName }: any) => {
   );
 };
 
-const HighlightsSection = ({ highlightsData }) => {
+const HighlightsSection = ({ highlightsData,HandleDelete }) => {
   const router = useRouter();
   const [likes, setLikes] = React.useState<{ [key: string]: number }>({});
   const [saved, setSaved] = React.useState<{ [key: string]: boolean }>({});
@@ -200,6 +227,8 @@ const HighlightsSection = ({ highlightsData }) => {
     }
   };
 
+
+
   return (
     <Flex direction="column" minHeight="100vh">
       <Box>
@@ -227,7 +256,7 @@ const HighlightsSection = ({ highlightsData }) => {
         </Text>
         <Highlights>
           {highlightsData.map((highlight, index) => (
-            <ToolBoxProfile key={index} highlight={highlight} index={index} />
+            <ToolBoxProfile key={index} highlight={highlight} index={index} HandleDelete={HandleDelete} />
           ))}
         </Highlights>
       </Box>

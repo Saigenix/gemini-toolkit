@@ -1,5 +1,5 @@
 import { app } from "./firebase";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, arrayUnion } from "firebase/firestore";
 import {
   doc,
   addDoc,
@@ -11,9 +11,15 @@ import {
   getDoc,
   increment,
   orderBy,
+  setDoc,
+  deleteDoc,
 } from "firebase/firestore";
-import { useCollection, useDocument } from "react-firebase-hooks/firestore";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+  useCollection,
+  useDocument,
+
+} from "react-firebase-hooks/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL, } from "firebase/storage";
 const db = getFirestore(app);
 
 export const GetAllData = async (filter = "stars") => {
@@ -81,20 +87,6 @@ export const updateDocumentStatus = async (id, status) => {
     return { success: true };
   } catch (error) {
     console.error("Error updating document status:", error);
-    return { success: false, error };
-  }
-};
-
-export const saveTool = async (userId, toolId) => {
-  try {
-    // needs implementation
-    // const userDocRef = doc(db, "users", userId);
-    // await updateDoc(userDocRef, {
-    //   savedTools: arrayUnion(toolId),
-    // });
-    // return { success: true };
-  } catch (error) {
-    console.error("Error saving tool:", error);
     return { success: false, error };
   }
 };
@@ -235,5 +227,84 @@ export const updateToolStatus = async (documentId, newStatus) => {
       message: "Failed to update tool status",
       error: error.message,
     };
+  }
+};
+
+// Function to save a tool
+export const saveTool = async (userId, toolId) => {
+  try {
+    const userDocRef = doc(db, "users", userId);
+    const userDoc = await getDoc(userDocRef);
+
+    if (!userDoc.exists()) {
+      // Create the document with the toolId in the savedTools array
+      await setDoc(userDocRef, { savedTools: [toolId] });
+    } else {
+      // Update the document by adding the toolId to the savedTools array
+      await updateDoc(userDocRef, {
+        savedTools: arrayUnion(toolId),
+      });
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error saving tool:", error);
+    return { success: false, error };
+  }
+};
+
+// Function to get all saved tools by user ID
+export const getSavedTools = async (userId) => {
+  try {
+    const userDocRef = doc(db, "users", userId);
+    const userDoc = await getDoc(userDocRef);
+
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      return { success: true, savedTools: userData.savedTools || [] };
+    } else {
+      return { success: false,savedTools: userData.savedTools || [], error: "User not found" };
+    }
+  } catch (error) {
+    console.error("Error getting saved tools:", error);
+    return { success: false, error };
+  }
+};
+
+export const getDocumentsByToolIds = async (toolIds) => {
+  try {
+    const q = query(collection(db, "users"));
+
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      const documents = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      let res = []
+      for (const tool of documents[0].savedTools) {
+        // console.log(tool);
+        const output = await getDocumentUsingToolID(tool);
+        res.push(output.data);
+      }
+      return { data: res, loading: false, error: null };
+    } else {
+      return { data: [], loading: false, error: null };
+    }
+  } catch (error) {
+    console.error("Error fetching documents:", error);
+    return { data: null, loading: false, error };
+  }
+};
+
+export const deleteTool = async (documentId) => {
+  try {
+    const documentRef = doc(db, 'data', documentId);
+    await deleteDoc(documentRef);
+    return { success: true, message: "Document successfully deleted" };
+  } catch (error) {
+    console.error("Error deleting document:", error);
+    return { success: false, error };
   }
 };

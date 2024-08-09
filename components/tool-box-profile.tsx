@@ -6,6 +6,7 @@ import {
   faScrewdriverWrench,
   faArrowRightLong,
   faEdit,
+  faTrashCan
 } from "@fortawesome/free-solid-svg-icons";
 import {
   Container,
@@ -26,15 +27,16 @@ import {
   useClipboard,
   useToast,
 } from "@chakra-ui/react";
-import { updateToolStatus } from "utils/firestore";
+import { updateToolStatus,deleteTool } from "utils/firestore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import OtherOptions from "./other-options";
 import { ButtonLink } from "components/button-link/button-link";
-import { set } from "date-fns";
-function ToolBoxProfile({ highlight, index }) {
+
+function ToolBoxProfile({ highlight, index,HandleDelete }) {
   const toast = useToast();
   const router = useRouter();
   const [status, setStatus] = useState(highlight.status);
+
   const togglePublicPrivate = async (id: string, status: boolean) => {
     // To set status to true
     const resultTrue = await updateToolStatus(id, !status);
@@ -64,16 +66,43 @@ function ToolBoxProfile({ highlight, index }) {
   return (
     <>
       <HighlightsItem key={index} title={highlight.toolName}>
-        <Icon
-          as={FontAwesomeIcon}
-          icon={faEdit}
-          boxSize="1.2rem"
-          position="absolute"
-          top={9}
-          right={4}
-          cursor="pointer"
-          onClick={() => router.push(`/edit-tool?toolID=${highlight.id}`)}
-        />
+        <Flex direction="row" height="100%">
+          <Icon
+            as={FontAwesomeIcon}
+            icon={faEdit}
+            boxSize="1.2rem"
+            position="absolute"
+            top={9}
+            right={10}
+            cursor="pointer"
+            onClick={() => {
+              if (highlight.prompts.length > 1) {
+                toast({
+                  title: "Error",
+                  description: `editing complex tools is coming soon...`,
+                  status: "info",
+                  duration: 5000,
+                  isClosable: true,
+                });
+              } else {
+                router.push(`/edit-tool?toolID=${highlight.id}`);
+              }
+            }}
+          />
+          <Icon
+            as={FontAwesomeIcon}
+            icon={faTrashCan}
+            boxSize="1.2rem"
+            position="absolute"
+            top={9}
+            right={4}
+            cursor="pointer"
+            color={"red"}
+            onClick={() => {
+              HandleDelete(highlight.id);
+            }}
+          />
+        </Flex>
         <Flex direction="column" height="100%">
           <Box flex="1">
             <Text color="muted" fontSize="lg">
@@ -123,5 +152,3 @@ function ToolBoxProfile({ highlight, index }) {
 }
 
 export default ToolBoxProfile;
-
-

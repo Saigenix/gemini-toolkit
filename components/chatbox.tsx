@@ -3,6 +3,7 @@ import * as React from "react";
 import { css, keyframes } from "@emotion/react";
 import geminiLogo from "../public/static/images/gemini.png";
 import userLogo from "../public/static/images/profile.png";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   Container,
   Box,
@@ -12,6 +13,7 @@ import {
   Heading,
   Text,
   VStack,
+  HStack,
   Flex,
   Spinner,
   Center,
@@ -29,6 +31,12 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { useEffect, useRef } from "react";
+import {
+  faQuestionCircle,
+  faToolbox,
+  faWrench,
+  faCommentDots
+} from "@fortawesome/free-solid-svg-icons";
 
 const ChatbotModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   isOpen,
@@ -116,8 +124,11 @@ const ChatbotModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
     }
   `;
 
+  const questionIcons = [faQuestionCircle, faToolbox, faWrench];
+  const iconColors = ["#FF6347", "#4682B4", "#32CD32"]; 
+
   const preQuestions = [
-    "How are you ?",
+    `How are you ?`,
     "How to use tool ?",
     "How to create tool ?",
   ];
@@ -125,27 +136,47 @@ const ChatbotModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="md" isCentered>
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Chat with Gemini Toolkit</ModalHeader>
+      <ModalContent
+        margin={{ base: "10px", sm: "20px", md: "30px" }}
+        borderRadius="15px"
+      >
+        <ModalHeader textAlign={"center"}>Chat with Gemini Toolkit</ModalHeader>
         <ModalCloseButton />
         <ModalBody maxHeight="400px" overflowY="auto">
-          <VStack spacing={3} align="stretch">
+          <Flex
+            justify="space-between"
+            textAlign="center"
+            alignItems="center"
+            mb={4}
+            wrap="wrap"
+          >
             {preQuestions.map((question, index) => (
               <Box
                 key={index}
                 as="button"
                 w="50%"
                 bg="#373A40"
-                border="0.5px solid #F5F7F8"
                 p={2}
-                borderRadius="md"
-                boxShadow="sm"
+                borderRadius="15px"
+                boxShadow="lg"
                 textAlign="left"
                 onClick={() => setInputValue(question)}
+                flexBasis={index === 2 ? "50%" : "45%"}
+                mt={index === 2 ? 2 : 0}
+                ml={index === 2 ? "auto" : 0}
+                mr={index === 2 ? "auto" : 0}
               >
-                <Text color="white">{question}</Text>
+
+                <Flex align="center" justify="center">
+                  <Text color="white" fontSize="sm" mr={2}>
+                    {question}
+                  </Text>
+                  <FontAwesomeIcon icon={questionIcons[index]} color={iconColors[index]} />
+                </Flex>
               </Box>
             ))}
+          </Flex>
+          <VStack spacing={3} align="stretch">
             {messages.map((msg, index) => (
               <Box key={index} w="100%">
                 {msg.role === "user" && (
