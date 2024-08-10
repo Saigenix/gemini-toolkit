@@ -1,7 +1,10 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleQuestion } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCircleQuestion,
+  faCircleCheck,
+} from "@fortawesome/free-solid-svg-icons";
 import {
   Box,
   Button,
@@ -108,9 +111,8 @@ const CreateSimple: React.FC = ({ user }: any) => {
     }
   };
 
-
   const handleUseTool = () => {
-    router.push(`/tool?toolID=/${createdToolId}`); 
+    router.push(`/tool?toolID=/${createdToolId}`);
   };
 
   const isFormValid = name && description && prompt;
@@ -246,14 +248,14 @@ const CreateSimple: React.FC = ({ user }: any) => {
           <ModalHeader>Tool Created Successfully</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Text>Your tool has been created successfully!</Text>
-            <Button mt={4} colorScheme="purple" onClick={handleUseTool}>
-              Use Tool
-            </Button>
+            <Text>
+              Your tool has been created successfully{" "}
+              <FontAwesomeIcon color="#06D001" icon={faCircleCheck} />
+            </Text>
           </ModalBody>
           <ModalFooter>
-            <Button variant="ghost" onClick={onClose}>
-              Close
+            <Button mt={4} colorScheme="purple" onClick={handleUseTool}>
+              Use Tool
             </Button>
           </ModalFooter>
         </ModalContent>
@@ -263,4 +265,3 @@ const CreateSimple: React.FC = ({ user }: any) => {
 };
 
 export default isAuth(CreateSimple);
-

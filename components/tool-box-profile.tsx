@@ -66,14 +66,14 @@ function ToolBoxProfile({ highlight, index,HandleDelete }) {
   return (
     <>
       <HighlightsItem key={index} title={highlight.toolName}>
-        <Flex direction="row" height="100%">
+        <Flex direction="column" height="100%">
           <Icon
             as={FontAwesomeIcon}
             icon={faEdit}
-            boxSize="1.2rem"
+            boxSize="1.1rem"
             position="absolute"
             top={9}
-            right={10}
+            right={9}
             cursor="pointer"
             onClick={() => {
               if (highlight.prompts.length > 1) {
@@ -92,12 +92,12 @@ function ToolBoxProfile({ highlight, index,HandleDelete }) {
           <Icon
             as={FontAwesomeIcon}
             icon={faTrashCan}
-            boxSize="1.2rem"
+            boxSize="1.1rem"
             position="absolute"
             top={9}
-            right={4}
+            right={2}
             cursor="pointer"
-            color={"red"}
+            color={"#F32424"}
             onClick={() => {
               HandleDelete(highlight.id);
             }}
