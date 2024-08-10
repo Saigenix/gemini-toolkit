@@ -4,6 +4,10 @@ import { GenerateTextOutput } from 'utils/gemini';
 type Data = {
   name: string
 }
+export const config = {
+  maxDuration: 59,
+};
+
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
