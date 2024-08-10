@@ -84,3 +84,5 @@ export const FooterLink: React.FC<LinkProps> = (props) => {
     </Link>
   )
 }
+
+
