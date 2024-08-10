@@ -52,7 +52,7 @@ export const getDocumentUsingToolID = async (toolID) => {
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      return { data: docSnap.data(), error: null };
+      return { data: docSnap.data(), error: null , id: docSnap.id };
     } else {
       return { data: null, error: new Error("No such document!") };
     }
@@ -286,7 +286,7 @@ export const getDocumentsByToolIds = async (toolIds) => {
       for (const tool of documents[0].savedTools) {
         // console.log(tool);
         const output = await getDocumentUsingToolID(tool);
-        res.push(output.data);
+        res.push({ ...output.data, id: output.id });
       }
       return { data: res, loading: false, error: null };
     } else {
