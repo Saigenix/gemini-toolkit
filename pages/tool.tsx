@@ -165,8 +165,8 @@ const ToolPage: NextPage = ({}: any) => {
         );
       };
       runNow();
-      setShowResponses(geminiOutput.map(() => true));
     }
+    setShowResponses(geminiOutput.map(() => true));
   }, [geminiOutput]);
   const handleSubmit = async () => {
     setgeminiOutput((prev) => []);
