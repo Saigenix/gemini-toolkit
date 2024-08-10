@@ -37,6 +37,7 @@ import {
   faCircleQuestion,
   faCircleInfo,
   faQuestion,
+  faCircleCheck
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import "@xyflow/react/dist/style.css";
@@ -362,14 +363,13 @@ const CreateTool: NextPage = ({ user }: any) => {
           <ModalHeader>Tool Created Successfully</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Text>Your tool has been created successfully!</Text>
-            <Button mt={4} colorScheme="purple" onClick={handleUseTool}>
-              Use Tool
-            </Button>
+            <Text>Your tool has been created successfully{" "}
+            <FontAwesomeIcon color="#06D001" icon={faCircleCheck} />
+            </Text>
           </ModalBody>
           <ModalFooter>
-            <Button variant="ghost" onClick={onClose}>
-              Close
+          <Button mt={4} colorScheme="purple" onClick={handleUseTool}>
+              Use Tool
             </Button>
           </ModalFooter>
         </ModalContent>
