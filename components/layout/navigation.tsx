@@ -99,7 +99,7 @@ const Navigation: React.FC = () => {
           <IconButton
             aria-label="Chatbot"
             icon={<FontAwesomeIcon icon={faCommentDots} />}
-            colorScheme="green"
+            colorScheme="purple"
             borderRadius="full"
             size="sm"
             onClick={onOpen}

@@ -35,7 +35,7 @@ import {
   faQuestionCircle,
   faToolbox,
   faWrench,
-  faCommentDots
+  faCommentDots,
 } from "@fortawesome/free-solid-svg-icons";
 
 const ChatbotModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
@@ -125,7 +125,7 @@ const ChatbotModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   `;
 
   const questionIcons = [faQuestionCircle, faToolbox, faWrench];
-  const iconColors = ["#FF6347", "#4682B4", "#32CD32"]; 
+  const iconColors = ["#FF6347", "#4682B4", "#32CD32"];
 
   const preQuestions = [
     `How are you ?`,
@@ -166,12 +166,14 @@ const ChatbotModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
                 ml={index === 2 ? "auto" : 0}
                 mr={index === 2 ? "auto" : 0}
               >
-
                 <Flex align="center" justify="center">
                   <Text color="white" fontSize="sm" mr={2}>
                     {question}
                   </Text>
-                  <FontAwesomeIcon icon={questionIcons[index]} color={iconColors[index]} />
+                  <FontAwesomeIcon
+                    icon={questionIcons[index]}
+                    color={iconColors[index]}
+                  />
                 </Flex>
               </Box>
             ))}
@@ -262,3 +264,4 @@ const ChatbotModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
 };
 
 export default ChatbotModal;
+

@@ -252,7 +252,7 @@ const HighlightsSection = ({ highlightsData,HandleDelete }) => {
           mt={3}
           marginBottom={-15}
         >
-          Total Tools: {highlightsData.length}
+          Total Tools : {highlightsData.length}
         </Text>
         <Highlights>
           {highlightsData.map((highlight, index) => (
@@ -265,3 +265,5 @@ const HighlightsSection = ({ highlightsData,HandleDelete }) => {
 };
 
 export default Profile;
+
+
