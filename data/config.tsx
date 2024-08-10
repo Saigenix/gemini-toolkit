@@ -33,8 +33,7 @@ const siteConfig = {
   footer: {
     copyright: (
       <>
-        Copyright &copy; {' '}
-        <Link href="#">2024 All Rights Reserved</Link>
+        Powered By Gemini
       </>
     ),
     links: [
@@ -42,10 +41,10 @@ const siteConfig = {
         href: '#',
         label: 'Contact',
       },
-      {
-        href: '#',
-        label: <FaTwitter size="14" />,
-      },
+      // {
+      //   href: '#',
+      //   label: <FaTwitter size="14" />,
+      // },
       {
         href: '#',
         label: <FaGithub size="14" />,

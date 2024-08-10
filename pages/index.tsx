@@ -5,8 +5,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowUpRightFromSquare,
   faCommentDots,
-  faUser,
-  faRobot,
 } from "@fortawesome/free-solid-svg-icons";
 import OtherOptions from "components/other-options";
 import { css, keyframes } from "@emotion/react";
@@ -29,13 +27,6 @@ import {
   InputGroup,
   InputRightElement,
   useDisclosure,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
 } from "@chakra-ui/react";
 import { SEO } from "components/seo/seo";
 import { BackgroundGradient } from "components/gradients/background-gradient";
@@ -102,71 +93,73 @@ const Home: NextPage = () => {
   `;
 
   return (
-    <Box>
-      <SEO title="Gemini ToolKit" description="Next Generation AI" />
+    <Flex direction="column" minHeight="100vh">
       <Box>
-        <ExploreTools />
-        <Container maxW="container.xl" textAlign="center" pb={-3}>
-          <InputGroup
-            size="md"
-            maxW="lg"
-            mx="auto"
-            mt={0}
-            borderRadius="full"
-            borderColor="purple.500"
-            boxShadow="md"
-            sx={{ animation: `${glowing} 2s infinite` }}
-          >
-            <Input
-              pr="4.5rem"
-              padding={5}
-              placeholder="Search Tools"
-              value={searchTerm}
-              onChange={handleSearch}
+        <SEO title="Gemini ToolKit" description="Next Generation AI" />
+        <Box>
+          <ExploreTools />
+          <Container maxW="container.xl" textAlign="center" pb={-3}>
+            <InputGroup
+              size="md"
+              maxW="lg"
+              mx="auto"
+              mt={0}
               borderRadius="full"
-              focusBorderColor="purple.500"
-            />
-            <InputRightElement width="4.5rem" />
-          </InputGroup>
-          <Button
-            mt={10}
-            color="white"
-            cursor="pointer"
-            bgGradient="linear(to-r, blue.500, purple.500)"
-            _hover={{ bgGradient: "linear(to-r, blue.600, purple.600)" }}
+              borderColor="purple.500"
+              boxShadow="md"
+              sx={{ animation: `${glowing} 2s infinite` }}
+            >
+              <Input
+                pr="4.5rem"
+                padding={5}
+                placeholder="Search Tools"
+                value={searchTerm}
+                onChange={handleSearch}
+                borderRadius="full"
+                focusBorderColor="purple.500"
+              />
+              <InputRightElement width="4.5rem" />
+            </InputGroup>
+            <Button
+              mt={10}
+              color="white"
+              cursor="pointer"
+              bgGradient="linear(to-r, blue.500, purple.500)"
+              _hover={{ bgGradient: "linear(to-r, blue.600, purple.600)" }}
+              borderRadius="full"
+              onClick={handleClick}
+              size="lg"
+            >
+              Create Tool
+            </Button>
+          </Container>
+          {loading ? (
+            <Center height="100%" pt="20">
+              <Spinner
+                thickness="4px"
+                speed="0.65s"
+                emptyColor="gray.200"
+                color="blue.500"
+                size="xl"
+              />
+            </Center>
+          ) : null}
+          <HighlightsSection tools={filteredTools} />
+          <IconButton
+            aria-label="Chatbot"
+            icon={<FontAwesomeIcon icon={faCommentDots} />}
+            position="fixed"
+            bottom="40px"
+            right="20px"
+            colorScheme="purple"
             borderRadius="full"
-            onClick={handleClick}
             size="lg"
-          >
-            Create Tool
-          </Button>
-        </Container>
-        {loading ? (
-          <Center height="100%" pt="20">
-            <Spinner
-              thickness="4px"
-              speed="0.65s"
-              emptyColor="gray.200"
-              color="blue.500"
-              size="xl"
-            />
-          </Center>
-        ) : null}
-        <HighlightsSection tools={filteredTools} />
-        <IconButton
-          aria-label="Chatbot"
-          icon={<FontAwesomeIcon icon={faCommentDots} />}
-          position="fixed"
-          bottom="40px"
-          right="20px"
-          colorScheme="purple"
-          borderRadius="full"
-          size="lg"
-          onClick={onOpen}
-        />
-        {user && <ChatbotModal isOpen={isOpen} onClose={onClose} />}
+            onClick={onOpen}
+          />
+          {user && <ChatbotModal isOpen={isOpen} onClose={onClose} />}
+        </Box>
       </Box>
-    </Box>
+    </Flex>
   );
 };
 
@@ -256,6 +249,5 @@ const HighlightsSection = ({ tools }: any) => {
     </Highlights>
   );
 };
-
 
 export default Home;

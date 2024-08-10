@@ -70,7 +70,7 @@ const Navigation: React.FC = () => {
   const showNotificationBell = useBreakpointValue({ base: false, md: true });
 
   return (
-    <HStack marginRight={10} spacing="2" flexShrink={0} position="relative">
+    <HStack spacing="2" flexShrink={0} position="relative">
       {siteConfig.header.links.map(({ href, id, ...props }, i) => {
         if (href === "/signup" && user) {
           return null;
@@ -99,7 +99,7 @@ const Navigation: React.FC = () => {
           <IconButton
             aria-label="Chatbot"
             icon={<FontAwesomeIcon icon={faCommentDots} />}
-            colorScheme="green"
+            colorScheme="purple"
             borderRadius="full"
             size="sm"
             onClick={onOpen}
