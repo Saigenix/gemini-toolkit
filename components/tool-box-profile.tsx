@@ -6,7 +6,7 @@ import {
   faScrewdriverWrench,
   faArrowRightLong,
   faEdit,
-  faTrashCan
+  faTrashCan,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   Container,
@@ -27,12 +27,12 @@ import {
   useClipboard,
   useToast,
 } from "@chakra-ui/react";
-import { updateToolStatus,deleteTool } from "utils/firestore";
+import { updateToolStatus, deleteTool } from "utils/firestore";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import OtherOptions from "./other-options";
 import { ButtonLink } from "components/button-link/button-link";
 
-function ToolBoxProfile({ highlight, index,HandleDelete }) {
+function ToolBoxProfile({ highlight, index, HandleDelete }) {
   const toast = useToast();
   const router = useRouter();
   const [status, setStatus] = useState(highlight.status);
@@ -104,8 +104,8 @@ function ToolBoxProfile({ highlight, index,HandleDelete }) {
           />
         </Flex>
         <Flex direction="column" height="100%">
-          <Box flex="1">
-            <Text color="muted" fontSize="lg">
+          <Box flex="1" minHeight="100px">
+            <Text color="muted" fontSize="lg" noOfLines={3}>
               {highlight.description}
             </Text>
           </Box>
