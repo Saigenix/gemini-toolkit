@@ -9,6 +9,7 @@ import {
 import OtherOptions from "components/other-options";
 import { css, keyframes } from "@emotion/react";
 import geminiLogo from "../public/static/images/gemini.png";
+import heading from "../public/static/images/heading.png";
 import userLogo from "../public/static/images/profile.png";
 import { useRouter } from "next/router";
 import {
@@ -19,6 +20,7 @@ import {
   IconButton,
   Heading,
   Text,
+  Image,
   VStack,
   Flex,
   Spinner,
@@ -173,6 +175,22 @@ const ExploreTools: React.FC = () => {
         </Heading>
       </Container>
     </Box>
+
+    // <Box position="relative" overflow="hidden">
+    //   <BackgroundGradient height={400} zIndex="-1" />
+    //   <Container maxW="container.xl" textAlign="center" pb={1}>
+    //       <Image
+    //         src={heading.src}
+    //         alt="Explore AI Tools"
+    //         boxSize="auto"
+    //         maxW="30%"
+    //         // alignSelf="center"
+    //         mt={20}
+    //         mb={5}
+    //       />
+    //   </Container>
+    // </Box>
+
   );
 };
 
