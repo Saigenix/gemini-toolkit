@@ -74,6 +74,13 @@ function OtherOptions({ toolId, stars }) {
 
   const handleSave = async (toolId: string) => {
     if (!saved && !loading && user) {
+      toast({
+        title: "Saving tool...",
+        status: "info",
+        duration: 1000,
+        isClosable: true,
+        position: "top-right",
+      });
       // console.log("saving");
       try {
         await saveTool(user.uid,toolId);
