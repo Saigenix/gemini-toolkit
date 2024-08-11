@@ -189,7 +189,7 @@ const CreateTool: NextPage = ({ user }: any) => {
               Create Simple Tool
             </Button>
             <Tooltip
-              label="How to create a simple tool"
+              label="You can create simple tool from here"
               placement="bottom"
               hasArrow
             >

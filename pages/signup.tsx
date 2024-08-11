@@ -1,6 +1,6 @@
 import { NextPage } from "next";
 import NextLink from "next/link";
-import { Box, Center, Stack, Button, Text } from "@chakra-ui/react";
+import { Box, Center, Stack, Button, Text} from "@chakra-ui/react";
 import { Features } from "components/features";
 import { BackgroundGradient } from "components/gradients/background-gradient";
 import { Section } from "components/section";
@@ -74,6 +74,7 @@ const SignUp: NextPage = () => {
             />
           </Box>
           <Center height="100%" flex="1">
+          
             <Box
               width="100%"
               maxW="container.sm"
@@ -82,7 +83,7 @@ const SignUp: NextPage = () => {
             >
               <Text
                 fontWeight="bold"
-                fontSize="2xl"
+                fontSize="3xl"
                 mb={6}
                 mt={{ base: 4, lg: 0 }}
               >
@@ -124,5 +125,3 @@ export const getStaticProps = () => {
     },
   };
 };
-
-

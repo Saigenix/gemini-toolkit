@@ -70,7 +70,7 @@ const Navigation: React.FC = () => {
   const showNotificationBell = useBreakpointValue({ base: false, md: true });
 
   return (
-    <HStack marginLeft={5} spacing="2" flexShrink={0} position="relative">
+    <HStack marginLeft={0.3} spacing="2" flexShrink={0} position="relative">
       {siteConfig.header.links.map(({ href, id, ...props }, i) => {
         if (href === "/signup" && user) {
           return null;

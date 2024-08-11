@@ -38,15 +38,11 @@ const siteConfig = {
     ),
     links: [
       {
-        href: '#',
+        href: 'https://github.com/Saigenix/gemini-toolkit',
         label: 'Contact',
       },
-      // {
-      //   href: '#',
-      //   label: <FaTwitter size="14" />,
-      // },
       {
-        href: '#',
+        href: 'https://github.com/Saigenix/gemini-toolkit',
         label: <FaGithub size="14" />,
       },
     ],
@@ -56,18 +52,18 @@ const siteConfig = {
     features: [
       {
         icon: FiCheck,
-        title: 'User-Friendly Interface',
-        description: 'Easily navigate and build with a straightforward, intuitive design.',
+        title: 'Custom AI Tool Creation',
+        description: 'Easily create text-based and image-based AI tools with Gemini Toolkit.',
       },
       {
         icon: FiCheck,
-        title: 'Customizable Templates',
-        description: 'Tailor your AI tools with flexible templates to meet your specific needs.',
+        title: 'Advanced Tool Management',
+        description: 'Manage, use, share, like, and save your tools effortlessly.',
       },
       {
         icon: FiCheck,
-        title: 'Seamless API Integration',
-        description: 'Effortlessly connect with the Gemini API for advanced AI functionalities.',
+        title: 'Integrated AI Chatbot',
+        description: 'Get quick support and info through our on-site AI chatbot.',
       },
     ],
   },
