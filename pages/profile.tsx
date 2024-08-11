@@ -265,5 +265,3 @@ const HighlightsSection = ({ highlightsData,HandleDelete }) => {
 };
 
 export default Profile;
-
-

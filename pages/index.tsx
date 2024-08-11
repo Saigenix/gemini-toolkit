@@ -190,7 +190,6 @@ const ExploreTools: React.FC = () => {
     //       />
     //   </Container>
     // </Box>
-
   );
 };
 
@@ -269,3 +268,5 @@ const HighlightsSection = ({ tools }: any) => {
 };
 
 export default Home;
+
+

@@ -77,7 +77,6 @@ const SignUp: NextPage = () => {
             <Box
               width="100%"
               maxW="container.sm"
-              pt="8"
               px={{ base: 4, lg: 8 }}
               textAlign="center"
             >
