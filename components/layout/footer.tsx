@@ -73,6 +73,7 @@ export const FooterLink: React.FC<LinkProps> = (props) => {
     <Link
       color="muted"
       fontSize="sm"
+      target="_blank"
       textDecoration="none"
       _hover={{
         color: 'white',
@@ -84,5 +85,6 @@ export const FooterLink: React.FC<LinkProps> = (props) => {
     </Link>
   )
 }
+
 
 

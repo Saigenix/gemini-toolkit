@@ -65,15 +65,27 @@ function ToolBoxProfile({ highlight, index, HandleDelete }) {
   };
   return (
     <>
-      <HighlightsItem key={index} title={highlight.toolName}>
+      <HighlightsItem key={index}>
         <Flex direction="column" height="100%">
+          <Heading
+            fontSize={25}
+            mb={5}
+            paddingRight="4rem"
+            maxWidth="calc(100% - 8rem)"
+            minWidth="270px"
+            overflow="hidden"
+            textOverflow="ellipsis"
+            whiteSpace="normal"
+          >
+            {highlight.toolName}
+          </Heading>
           <Icon
             as={FontAwesomeIcon}
             icon={faEdit}
             boxSize="1.1rem"
             position="absolute"
             top={9}
-            right={9}
+            right={10}
             cursor="pointer"
             onClick={() => {
               if (highlight.prompts.length > 1) {
@@ -95,7 +107,7 @@ function ToolBoxProfile({ highlight, index, HandleDelete }) {
             boxSize="1.1rem"
             position="absolute"
             top={9}
-            right={2}
+            right={3}
             cursor="pointer"
             color={"#F32424"}
             onClick={() => {
@@ -103,7 +115,7 @@ function ToolBoxProfile({ highlight, index, HandleDelete }) {
             }}
           />
         </Flex>
-        <Flex direction="column" height="100%">
+        <Flex direction="column" height="140%">
           <Box flex="1" minHeight="100px">
             <Text color="muted" fontSize="lg" noOfLines={3}>
               {highlight.description}
@@ -112,7 +124,6 @@ function ToolBoxProfile({ highlight, index, HandleDelete }) {
           <Flex justifyContent="space-between" alignItems="center" mt={3}>
             <ButtonGroup spacing={3} alignItems="center">
               <ButtonLink
-                marginTop={2}
                 colorScheme="primary"
                 fontSize="1.2rem"
                 width={110}
@@ -128,7 +139,7 @@ function ToolBoxProfile({ highlight, index, HandleDelete }) {
             </ButtonGroup>
           </Flex>
         </Flex>
-        <Divider my={8} mb={1} borderColor="purple.500" borderWidth="2px" />
+        <Divider my={8} mb={1} borderColor="green.500" borderWidth="1px" />
         <Flex alignItems="center">
           <OtherOptions toolId={highlight.id} stars={highlight.stars} />
           <Text marginTop={10} paddingLeft={5}>

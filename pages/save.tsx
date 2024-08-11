@@ -153,7 +153,7 @@ const HighlightsSection = ({ tools }: { tools: any[] }) => {
                 </ButtonLink>
               </ButtonGroup>
             </Flex>
-            <Flex alignItems="center" mt={10}>
+            {/* <Flex alignItems="center" mt={10}>
               <Icon
                 as={SlActionRedo}
                 boxSize="1.2rem"
@@ -161,8 +161,8 @@ const HighlightsSection = ({ tools }: { tools: any[] }) => {
                 marginRight="1.2rem"
                 onClick={() => handleShare(highlight.id)}
               />
-              {/* <Icon as={BsBookmarkPlus} boxSize="1.2rem" marginRight="1.2rem" /> */}
-            </Flex>
+              <Icon as={BsBookmarkPlus} boxSize="1.2rem" marginRight="1.2rem" />
+            </Flex> */}
           </HighlightsItem>
         ))}
 
