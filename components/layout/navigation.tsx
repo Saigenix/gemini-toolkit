@@ -164,6 +164,7 @@ const Navigation: React.FC = () => {
               <>
                 <Avatar size="sm" name="User Name" src={user.photoURL!} />
                 <IconButton
+                  marginLeft={-1}
                   aria-label="Options"
                   icon={<FiMoreVertical />}
                   variant="link"
