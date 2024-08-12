@@ -77,7 +77,6 @@ const Navigation: React.FC = () => {
         } else {
           return (
             <NavLink
-              marginLeft={10}
               display={["block", null, "block"]}
               href={href || `/#${id}`}
               key={i}
@@ -138,6 +137,8 @@ const Navigation: React.FC = () => {
                 borderRadius="full"
                 width="40px"
                 height="40px"
+
+
                 mr="3"
                 animation={`${spin} infinite 2s linear`}
               />

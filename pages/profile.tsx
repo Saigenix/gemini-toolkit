@@ -227,8 +227,6 @@ const HighlightsSection = ({ highlightsData,HandleDelete }) => {
     }
   };
 
-
-
   return (
     <Flex direction="column" minHeight="100vh">
       <Box>
