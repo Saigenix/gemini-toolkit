@@ -130,7 +130,7 @@ const CreateTool: NextPage = ({ user }: any) => {
       img: "https://example.com/image.jpg",
       prompts: promptsArr,
       stars: 5,
-      status: true,
+      status: false,
       toolName: name,
       type: inputType,
       userId: user?.uid || "",
@@ -170,7 +170,7 @@ const CreateTool: NextPage = ({ user }: any) => {
   };
 
   const handleUseTool = () => {
-    router.push(`/tool?toolID=/${createdToolId}`); 
+    router.push(`/tool?toolID=/${createdToolId}`);
   };
 
   const isFormValid = name && description;
