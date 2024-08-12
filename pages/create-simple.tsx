@@ -71,7 +71,7 @@ const CreateSimple: React.FC = ({ user }: any) => {
       img: "https://example.com/image.jpg",
       prompts: [prompt],
       stars: 5,
-      status: true,
+      status: false,
       toolName: name,
       type,
       userId: user?.uid || "",
